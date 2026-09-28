@@ -69,6 +69,10 @@ an item in some layer or it silently won't highlight), `endpoints` (hero API con
   events. The ID is public by design.
 - `NEXT_PUBLIC_WEB3FORMS_KEY` is injected at build time from the `WEB3FORMS_KEY` repo secret; without it the contact
   form falls back to `mailto:`.
+- Contact form (`components/contact-form.tsx`) uses `noValidate` + custom rules in `lib/validate-contact.ts` (pure,
+  testable): field rules, disposable-domain blocklist, typo suggestions, and an MX lookup via Cloudflare DNS-over-HTTPS
+  that fails open. Submit as `FormData` (a JSON body triggers a CORS preflight). Capture `e.currentTarget` before any
+  `await` in submit handlers — React clears it.
 
 ## Design system
 
