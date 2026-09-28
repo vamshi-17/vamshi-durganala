@@ -2,20 +2,12 @@
 
 import { useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { ArrowDownToLine, ArrowUpRight, Check, Copy, Github, Linkedin, LoaderCircle, Mail, Play, X } from "lucide-react";
+import { ArrowDownToLine, ArrowUpRight, Check, Copy, Github, Linkedin, Mail, X } from "lucide-react";
 import { profile } from "@/data/profile";
-import { asset, cn, copyText } from "@/lib/utils";
+import { asset, copyText } from "@/lib/utils";
 import { Mark, SectionHeading } from "@/components/ui/section-heading";
 import { Reveal } from "@/components/ui/reveal";
-import { track } from "@/components/analytics";
-
-// Free key from https://web3forms.com, provided at build time; without it the form falls back to mailto.
-const WEB3FORMS_KEY = process.env.NEXT_PUBLIC_WEB3FORMS_KEY;
-
-type Status = "idle" | "sending" | "sent" | "error";
-
-const field =
-  "min-w-0 flex-1 border-b border-dashed border-line-strong bg-transparent text-lime outline-none placeholder:text-subtle focus:border-lime";
+import { ContactForm } from "@/components/contact-form";
 
 function CopyEmail() {
   const [copied, setCopied] = useState<"idle" | "ok" | "failed">("idle");
@@ -48,36 +40,6 @@ function CopyEmail() {
 }
 
 export function Contact() {
-  const [status, setStatus] = useState<Status>("idle");
-
-  async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
-    e.preventDefault();
-    const form = e.currentTarget;
-    const data = new FormData(form);
-
-    if (!WEB3FORMS_KEY) {
-      track("generate_lead", { method: "mailto" });
-      const subject = encodeURIComponent(`Hello from ${data.get("name")}`);
-      const body = encodeURIComponent(`${data.get("message")}\n\n— ${data.get("name")} (${data.get("email")})`);
-      window.location.href = `mailto:${profile.email}?subject=${subject}&body=${body}`;
-      return;
-    }
-
-    setStatus("sending");
-    data.append("access_key", WEB3FORMS_KEY);
-    data.append("subject", `Portfolio: message from ${data.get("name")}`);
-    try {
-      const res = await fetch("https://api.web3forms.com/submit", { method: "POST", body: data });
-      const json = await res.json();
-      if (!json.success) throw new Error(json.message);
-      setStatus("sent");
-      track("generate_lead", { method: "contact_form" });
-      form.reset();
-    } catch {
-      setStatus("error");
-    }
-  }
-
   const channels = [
     { href: profile.socials.linkedin, label: "linkedin", value: "in/vamshi-krishna-durganala", icon: Linkedin },
     { href: profile.socials.github, label: "github", value: "@vamshi-17", icon: Github },
@@ -99,89 +61,7 @@ export function Contact() {
 
         <div className="grid gap-12 lg:grid-cols-[1.2fr_1fr] lg:gap-16">
           <Reveal className="min-w-0">
-            <form onSubmit={onSubmit} className="overflow-hidden rounded-xl border border-line-strong bg-surface font-mono text-[13px]">
-              <div className="flex flex-wrap items-center justify-between gap-2 border-b border-line px-4 py-3">
-                <span>
-                  <span className="rounded bg-lime/15 px-2 py-1 text-[11px] font-semibold text-lime">POST</span>{" "}
-                  <span className="text-fg">/api/contact</span>
-                </span>
-                <span className="text-[11px] text-subtle">Content-Type: application/json</span>
-              </div>
-
-              <input type="checkbox" name="botcheck" className="hidden" tabIndex={-1} autoComplete="off" />
-
-              <div className="grid grid-cols-[2.25rem_1fr] py-4 leading-8">
-                <div className="select-none text-right text-subtle [&>span]:block">
-                  {[1, 2, 3, 4, 5, 6, 7, 8].map((n) => (
-                    <span key={n} className="pr-3">
-                      {n}
-                    </span>
-                  ))}
-                </div>
-                <div className="pr-4 pl-2">
-                  <div className="text-subtle">{"{"}</div>
-                  <label className="flex items-center gap-2 pl-4">
-                    <span className="shrink-0 text-fg">&quot;name&quot;</span>
-                    <span className="text-subtle">:</span>
-                    <input name="name" required autoComplete="name" placeholder='"Jane Doe"' className={field} />
-                    <span className="text-subtle">,</span>
-                  </label>
-                  <label className="flex items-center gap-2 pl-4">
-                    <span className="shrink-0 text-fg">&quot;email&quot;</span>
-                    <span className="text-subtle">:</span>
-                    <input name="email" type="email" required autoComplete="email" placeholder='"jane@company.com"' className={field} />
-                    <span className="text-subtle">,</span>
-                  </label>
-                  <label className="flex gap-2 pl-4">
-                    <span className="shrink-0 text-fg">&quot;message&quot;</span>
-                    <span className="text-subtle">:</span>
-                    <textarea
-                      name="message"
-                      required
-                      rows={4}
-                      placeholder='"We have a role you might like…"'
-                      className={cn(field, "resize-none border-b-0 leading-8")}
-                      data-lenis-prevent
-                    />
-                  </label>
-                  <div className="text-subtle">{"}"}</div>
-                </div>
-              </div>
-
-              <div className="flex flex-wrap items-center justify-between gap-3 border-t border-line px-4 py-3">
-                <AnimatePresence mode="wait">
-                  <motion.span
-                    key={status}
-                    initial={{ opacity: 0, y: 4 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0 }}
-                    className="text-xs"
-                  >
-                    {status === "idle" && <span className="text-subtle">{WEB3FORMS_KEY ? "ready" : "opens your mail app"}</span>}
-                    {status === "sending" && <span className="text-muted">sending…</span>}
-                    {status === "sent" && (
-                      <span>
-                        <span className="text-lime">201 Created</span> <span className="text-muted">— thanks, talk soon!</span>
-                      </span>
-                    )}
-                    {status === "error" && (
-                      <span>
-                        <span className="text-err">502</span> <span className="text-muted">— please email me directly</span>
-                      </span>
-                    )}
-                  </motion.span>
-                </AnimatePresence>
-                <motion.button
-                  type="submit"
-                  disabled={status === "sending"}
-                  whileTap={{ scale: 0.96 }}
-                  className="flex items-center gap-2 rounded-md bg-lime px-4 py-2 font-sans text-sm font-semibold text-bg transition hover:bg-fg disabled:opacity-60"
-                >
-                  {status === "sending" ? <LoaderCircle className="size-4 animate-spin" /> : <Play className="size-3.5 fill-current" />}
-                  Send request
-                </motion.button>
-              </div>
-            </form>
+            <ContactForm />
           </Reveal>
 
           <Reveal delay={0.1} className="min-w-0">
