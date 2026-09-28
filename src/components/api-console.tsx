@@ -6,6 +6,7 @@ import { Play, RotateCw } from "lucide-react";
 import { endpoints, type EndpointPath } from "@/data/profile";
 import { cn } from "@/lib/utils";
 import { ease } from "@/components/ui/reveal";
+import { track } from "@/components/analytics";
 
 const nodes = ["client", "gateway", "service", "kafka", "db"];
 const REQUEST_MS = 1000;
@@ -96,6 +97,7 @@ export function ApiConsole() {
             onClick={() => {
               setPath(p);
               send();
+              track("api_console_call", { endpoint: p });
             }}
             className={cn(
               "relative rounded px-2.5 py-1 font-mono text-xs transition-colors",
