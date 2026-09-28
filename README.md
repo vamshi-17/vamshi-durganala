@@ -1,6 +1,6 @@
 # Vamshi Krishna Durganala — Portfolio
 
-Personal portfolio built with **Next.js 15**, **Tailwind CSS v4** and **Framer Motion**, statically exported and deployed to **GitHub Pages**.
+Personal portfolio built with **Next.js 15**, **Tailwind CSS v4**, **Framer Motion** and **Lenis**, statically exported and deployed to **GitHub Pages**.
 
 Live: https://vamshi-17.github.io/vamshi-portfolio/
 
@@ -15,22 +15,31 @@ npm run build    # static export to ./out
 
 ## Editing content
 
-All copy — roles, experience, projects, skills, certifications, education — lives in
-[`src/data/profile.ts`](src/data/profile.ts). The résumé served by the site is
-[`public/Vamshi-Krishna-Durganala-Resume.pdf`](public/Vamshi-Krishna-Durganala-Resume.pdf); replace that file to update it.
+All copy lives in [`src/data/profile.ts`](src/data/profile.ts): roles (`services`), side projects (`projects`),
+the stack map (`layers` and `traces`), the hero console's `endpoints` and the header ticker (`logLines`).
+The résumé served by the site is [`public/Vamshi-Krishna-Durganala-Resume.pdf`](public/Vamshi-Krishna-Durganala-Resume.pdf);
+replace that file to update it.
+
+## Concept
+
+The page is modelled as a request travelling through a system — client → gateway → services → events → data → response.
+Each section is one hop, and the rail on the left tracks the reader's position through them.
 
 ## Project structure
 
 ```
 src/
-  app/                 layout, page, global styles, favicon
+  app/                   layout, page, global styles (graphite + lime tokens), favicon
   components/
-    sections/          hero, about, experience, work, skills, contact
-    ui/                reusable motion primitives (reveal, magnetic, spotlight card, counter, marquee)
-    nav.tsx            floating nav with active-section pill and scroll progress
-    background.tsx     aurora / grid / cursor-glow backdrop
-  data/profile.ts      all site content
-  lib/utils.ts         cn() and asset() (base-path aware) helpers
+    sections/            hero, about, experience, projects, stack, contact
+    api-console.tsx      interactive "GET /engineer" console in the hero
+    project-mocks.tsx    live mock UIs for each side project
+    system-rail.tsx      scroll-linked pipeline rail
+    command-palette.tsx  Ctrl/⌘ + K navigation
+    smooth-scroll.tsx    Lenis smooth scrolling
+    ui/                  reveal, magnetic, section heading, log ticker
+  data/profile.ts        all site content
+  lib/                   helpers and the active-section hook
 ```
 
 ## Deployment
