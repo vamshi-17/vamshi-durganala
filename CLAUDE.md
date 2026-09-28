@@ -1,0 +1,95 @@
+# CLAUDE.md
+
+This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+
+## What this is
+
+Personal portfolio of Vamshi Krishna Durganala. Next.js 15 (App Router) + Tailwind CSS v4 + Framer Motion + Lenis,
+**statically exported** and served from GitHub Pages at https://vamshi-17.github.io/vamshi-portfolio/.
+
+## Commands
+
+```bash
+npm run dev     # dev server on http://localhost:3001 (turbopack)
+npm run lint    # next lint (ESLint, next/core-web-vitals + typescript)
+npx tsc --noEmit
+npm run build   # static export to ./out
+npm run og      # re-render public/og.png from scripts/og/og.html (needs local Chrome/Edge; CHROME_PATH overrides)
+```
+
+There is no test suite yet; verification is lint + type-check + build, plus checking the page at desktop (1440px) and
+mobile (390px) widths.
+
+To build exactly as production does (assets under the Pages sub-path):
+
+```bash
+NEXT_PUBLIC_BASE_PATH=/vamshi-portfolio npm run build
+```
+
+On Windows Git Bash prefix with `MSYS_NO_PATHCONV=1`, otherwise `/vamshi-portfolio` is rewritten to a Windows path.
+
+## Workflow rules
+
+- `main` is protected and always equals what is live. Never commit to it directly: branch as `feat/*`, `fix/*`,
+  `chore/*`, `docs/*`, `ci/*`, use Conventional Commit messages, push, and open a PR with `gh pr create`.
+- `.github/workflows/deploy.yml` runs lint + build on every PR and deploys to Pages only on push to `main`
+  (i.e. merging a PR deploys). A PR is not done until its `build` check passes.
+- `gh` may not be on PATH in Git Bash on this machine; use `"/c/Program Files/GitHub CLI/gh.exe"`.
+- Commit author email for this repo is `durganalavamshikrishna@gmail.com` (set in local git config; the global one is
+  a work address).
+
+## Architecture
+
+**Concept — "live system".** The page is modelled as a request travelling through a backend. Each section is one hop,
+defined once in `hops` in `src/data/profile.ts` (`home→client`, `about→gateway`, `experience→services`,
+`projects→events`, `stack→data`, `contact→response`). Section ids, nav routes, the left `SystemRail`, the command
+palette and each `SectionHeading` ("02 · services — GET /experience 200") all derive from `hops`; adding or renaming a
+section means updating `hops` and the section's `id`, not those components.
+
+**All content lives in `src/data/profile.ts`** — profile, `services` (jobs, with typed `changelog` entries rendered as
+a git log), `projects` (side projects; each `id` maps to a mock UI in `components/project-mocks.tsx` via the `mocks`
+table in `sections/projects.tsx`), `layers` + `traces` (the stack map; every step in a trace's `path` must exactly match
+an item in some layer or it silently won't highlight), `endpoints` (hero API console JSON), `logLines` (ticker) and
+`headers` (about card). Prefer editing data over components.
+
+**Static export + base path.** `next.config.ts` sets `output: "export"` and `basePath` from `NEXT_PUBLIC_BASE_PATH`
+(set by CI to `/<repo-name>`, empty locally). Consequences:
+- Anything in `public/` referenced from code must go through `asset()` in `src/lib/utils.ts`.
+- Metadata image URLs in `layout.tsx` are *relative* (`"og.png"`) so they resolve against `metadataBase`, which
+  includes the sub-path. A leading `/` would drop it.
+- No server features: no API routes, no server actions, no runtime env. Anything dynamic runs client-side
+  (e.g. the contact form posts directly to Web3Forms).
+
+**Client-side runtime pieces.**
+- `components/smooth-scroll.tsx` owns the single Lenis instance; programmatic scrolling must use its `scrollToId()`.
+  Scrollable inner elements (palette list, textareas) need `data-lenis-prevent`.
+- `lib/use-active-section.ts` (IntersectionObserver) drives the active state in both `Nav` and `SystemRail`.
+- `CommandPalette` opens on Ctrl/⌘+K or via the `openPalette()` event helper.
+- `components/analytics.tsx` loads GA4 (`G-CSC26DCGT1`) in production builds only; use its `track()` for custom
+  events. The ID is public by design.
+- `NEXT_PUBLIC_WEB3FORMS_KEY` is injected at build time from the `WEB3FORMS_KEY` repo secret; without it the contact
+  form falls back to `mailto:`.
+
+## Design system
+
+Tokens are defined with `@theme` in `src/app/globals.css` (graphite `bg/surface/surface-2`, `fg/muted/subtle`, accent
+`lime` #c8f31d, plus `warn`/`err`). Fonts: Bricolage Grotesque (sans; `font-display` utility = condensed heavy cut
+for headlines) and JetBrains Mono (labels, code, technical text). Use the tokens rather than raw Tailwind colors.
+
+Conventions that exist for a reason:
+- Animate only `transform`/`opacity`. Blur filters, animated `backdrop-blur` and large animated blurred blobs caused
+  scroll jank and were removed. `MotionConfig reducedMotion="user"` and the CSS reduced-motion block must keep working.
+- Grid/flex children that contain long text or horizontally scrollable content need `min-w-0`, otherwise they widen
+  the page on mobile (this caused horizontal overflow twice).
+- `body` must not get a background (it would paint over the fixed `-z-10` backdrop); the background is on `html`.
+- Tailwind v4 only emits `@keyframes` declared inside `@theme` when a `--animate-*` token uses them; keyframes used via
+  arbitrary `animate-[…]` classes go at top level of `globals.css` (see `travel`).
+- Ongoing mock animations (e.g. `project-mocks.tsx`) run only while in view (`useTicker`/`useInView`).
+- Anything that depends on the visitor's clock or window renders a placeholder on the server and fills in inside
+  `useEffect`, to avoid hydration mismatches in the static HTML.
+
+## Assets
+
+- `public/Vamshi-Krishna-Durganala-Resume.pdf` is the résumé the site serves; replace the file to update it.
+- `public/og.png` is generated — edit `scripts/og/og.html` and run `npm run og`, don't hand-edit the PNG.
+- `src/app/icon.svg` (favicon) and `src/app/apple-icon.png` (180px, full-bleed) are Next file-based metadata.
