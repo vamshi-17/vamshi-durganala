@@ -1,7 +1,5 @@
 export const profile = {
   name: "Vamshi Krishna Durganala",
-  firstName: "Vamshi",
-  role: "Full Stack Engineer",
   email: "durganalavamshikrishna@gmail.com",
   phone: "+1 (980) 613-7558",
   location: "Charlotte, NC",
