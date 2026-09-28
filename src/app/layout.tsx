@@ -21,8 +21,17 @@ export const metadata: Metadata = {
   description,
   keywords: ["Vamshi Krishna Durganala", "Full Stack Engineer", "Java", "Spring Boot", "Kafka", "React", "AWS", "Charlotte"],
   authors: [{ name: "Vamshi Krishna Durganala" }],
-  openGraph: { title, description, type: "website", locale: "en_US" },
-  twitter: { card: "summary", title, description },
+  openGraph: {
+    title,
+    description,
+    type: "website",
+    locale: "en_US",
+    url: "./",
+    siteName: "Vamshi Krishna Durganala",
+    // Relative to metadataBase so the GitHub Pages base path is kept. Source: scripts/og (npm run og).
+    images: [{ url: "og.png", width: 1200, height: 630, alt: "Vamshi Krishna Durganala — Full Stack Engineer" }],
+  },
+  twitter: { card: "summary_large_image", title, description, images: ["og.png"] },
 };
 
 export const viewport: Viewport = {
