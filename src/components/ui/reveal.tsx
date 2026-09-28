@@ -6,13 +6,13 @@ export const ease = [0.22, 1, 0.36, 1] as const;
 
 type RevealProps = HTMLMotionProps<"div"> & { delay?: number; y?: number };
 
-/** Fades, lifts and un-blurs its children the first time they scroll into view. */
-export function Reveal({ delay = 0, y = 24, ...props }: RevealProps) {
+/** Fades and lifts its children the first time they scroll into view (transform + opacity only). */
+export function Reveal({ delay = 0, y = 28, ...props }: RevealProps) {
   return (
     <motion.div
-      initial={{ opacity: 0, y, filter: "blur(8px)" }}
-      whileInView={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-      viewport={{ once: true, margin: "-80px" }}
+      initial={{ opacity: 0, y }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, margin: "-60px" }}
       transition={{ duration: 0.8, delay, ease }}
       {...props}
     />
@@ -21,25 +21,16 @@ export function Reveal({ delay = 0, y = 24, ...props }: RevealProps) {
 
 const container: Variants = {
   hidden: {},
-  show: { transition: { staggerChildren: 0.08 } },
+  show: { transition: { staggerChildren: 0.07 } },
 };
 
 const item: Variants = {
-  hidden: { opacity: 0, y: 24, filter: "blur(6px)" },
-  show: { opacity: 1, y: 0, filter: "blur(0px)", transition: { duration: 0.7, ease } },
+  hidden: { opacity: 0, y: 20 },
+  show: { opacity: 1, y: 0, transition: { duration: 0.6, ease } },
 };
 
-/** Staggers the entrance of its <StaggerItem> children. */
 export function Stagger(props: HTMLMotionProps<"div">) {
-  return (
-    <motion.div
-      variants={container}
-      initial="hidden"
-      whileInView="show"
-      viewport={{ once: true, margin: "-80px" }}
-      {...props}
-    />
-  );
+  return <motion.div variants={container} initial="hidden" whileInView="show" viewport={{ once: true, margin: "-60px" }} {...props} />;
 }
 
 export function StaggerItem(props: HTMLMotionProps<"div">) {

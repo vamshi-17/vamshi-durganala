@@ -1,44 +1,45 @@
 @import "tailwindcss";
+@import "lenis/dist/lenis.css";
 
 @theme {
-  --color-bg: #07070b;
-  --color-surface: #0d0d13;
-  --color-surface-2: #14141c;
-  --color-line: rgb(255 255 255 / 0.08);
-  --color-line-strong: rgb(255 255 255 / 0.14);
-  --color-fg: #ededf3;
-  --color-muted: #8e8e9f;
-  --color-subtle: #5d5d6e;
-  --color-accent: #a78bfa;
-  --color-accent-strong: #8b5cf6;
-  --color-accent-2: #22d3ee;
+  --color-bg: #0c0d0c;
+  --color-surface: #121311;
+  --color-surface-2: #191a18;
+  --color-line: rgb(236 234 228 / 0.08);
+  --color-line-strong: rgb(236 234 228 / 0.16);
+  --color-fg: #eceae4;
+  --color-muted: #9a9b93;
+  --color-subtle: #62635d;
+  --color-lime: #c8f31d;
+  --color-lime-dim: #9dbf12;
+  --color-warn: #ffb547;
+  --color-err: #ff6b57;
 
-  --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
-  --font-mono: var(--font-geist-mono), ui-monospace, monospace;
-  --font-serif: var(--font-instrument-serif), ui-serif, Georgia, serif;
+  --font-sans: var(--font-bricolage), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-jetbrains), ui-monospace, monospace;
 
-  --animate-marquee: marquee 40s linear infinite;
-  --animate-aurora: aurora 18s ease-in-out infinite alternate;
-  --animate-float: float 6s ease-in-out infinite;
+  --animate-ticker: ticker 60s linear infinite;
+  --animate-blink: blink 1.1s steps(1) infinite;
 
-  @keyframes marquee {
+  @keyframes ticker {
     to { transform: translateX(-50%); }
   }
-  @keyframes aurora {
-    0% { transform: translate3d(0, 0, 0) scale(1); }
-    50% { transform: translate3d(8%, 6%, 0) scale(1.15); }
-    100% { transform: translate3d(-6%, 10%, 0) scale(0.95); }
+  @keyframes blink {
+    50% { opacity: 0; }
   }
-  @keyframes float {
-    0%, 100% { transform: translateY(0); }
-    50% { transform: translateY(-10px); }
-  }
+}
+
+/* Packet moving along an offset-path (stack trace overlay). */
+@keyframes travel {
+  from { offset-distance: 0%; opacity: 0; }
+  8% { opacity: 1; }
+  92% { opacity: 1; }
+  to { offset-distance: 100%; opacity: 0; }
 }
 
 html {
   background: var(--color-bg);
   color: var(--color-fg);
-  scroll-behavior: smooth;
   color-scheme: dark;
 }
 
@@ -47,39 +48,43 @@ body {
   font-family: var(--font-sans);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  overflow-x: hidden;
+  overflow-x: clip;
 }
 
 section[id] {
-  scroll-margin-top: 6rem;
+  scroll-margin-top: 5rem;
 }
 
 ::selection {
-  background: rgb(167 139 250 / 0.35);
-  color: #fff;
+  background: var(--color-lime);
+  color: var(--color-bg);
+}
+
+:focus-visible {
+  outline: 2px solid var(--color-lime);
+  outline-offset: 3px;
+  border-radius: 6px;
 }
 
 ::-webkit-scrollbar { width: 10px; }
 ::-webkit-scrollbar-track { background: var(--color-bg); }
 ::-webkit-scrollbar-thumb {
-  background: #23232e;
+  background: #262724;
   border-radius: 999px;
   border: 2px solid var(--color-bg);
 }
-::-webkit-scrollbar-thumb:hover { background: #33333f; }
 
-@utility text-gradient {
-  background: linear-gradient(100deg, #c4b5fd 0%, #a78bfa 35%, #22d3ee 100%);
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
+/* Condensed, heavy display cut of Bricolage for headlines. */
+@utility font-display {
+  font-family: var(--font-bricolage), ui-sans-serif, system-ui, sans-serif;
+  font-variation-settings: "opsz" 96, "wdth" 86;
+  font-weight: 700;
+  letter-spacing: -0.018em;
 }
 
-@utility bg-grid {
-  background-image:
-    linear-gradient(to right, rgb(255 255 255 / 0.045) 1px, transparent 1px),
-    linear-gradient(to bottom, rgb(255 255 255 / 0.045) 1px, transparent 1px);
-  background-size: 64px 64px;
+@utility bg-dots {
+  background-image: radial-gradient(rgb(236 234 228 / 0.07) 1px, transparent 1px);
+  background-size: 22px 22px;
 }
 
 @utility bg-noise {
@@ -87,11 +92,10 @@ section[id] {
 }
 
 @utility mask-fade-x {
-  mask-image: linear-gradient(to right, transparent, black 12%, black 88%, transparent);
+  mask-image: linear-gradient(to right, transparent, black 8%, black 92%, transparent);
 }
 
 @media (prefers-reduced-motion: reduce) {
-  html { scroll-behavior: auto; }
   *, *::before, *::after {
     animation-duration: 0.001ms !important;
     animation-iteration-count: 1 !important;
