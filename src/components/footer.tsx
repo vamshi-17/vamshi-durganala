@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { ArrowUp } from "lucide-react";
 import { profile } from "@/data/profile";
-import { scrollToId } from "@/components/smooth-scroll";
+import { navigateTo } from "@/components/smooth-scroll";
 import { ease } from "@/components/ui/reveal";
 
 const BUILD_YEAR = new Date().getFullYear();
@@ -44,7 +44,7 @@ export function Footer() {
             <span>© {year} {profile.name}</span>
             <button
               type="button"
-              onClick={() => scrollToId("home")}
+              onClick={() => navigateTo("home")}
               className="flex items-center gap-1 text-fg transition hover:text-lime"
               aria-label="Back to top"
             >

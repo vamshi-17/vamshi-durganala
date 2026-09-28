@@ -8,6 +8,7 @@ import { asset } from "@/lib/utils";
 import { ApiConsole } from "@/components/api-console";
 import { LogTicker } from "@/components/ui/marquee";
 import { Magnetic } from "@/components/ui/magnetic";
+import { SectionLink } from "@/components/ui/section-link";
 import { ease } from "@/components/ui/reveal";
 
 function LocalTime() {
@@ -104,13 +105,13 @@ export function Hero() {
 
             <div className="mt-8 flex flex-wrap items-center gap-3">
               <Magnetic>
-                <a
-                  href="#projects"
+                <SectionLink
+                  to="projects"
                   className="group inline-flex items-center gap-2 rounded-md bg-lime px-5 py-3 font-semibold text-bg transition hover:bg-fg"
                 >
                   See what I&apos;ve built
                   <ArrowDown className="size-4 transition-transform duration-300 group-hover:translate-y-0.5" />
-                </a>
+                </SectionLink>
               </Magnetic>
               <a
                 href={asset(profile.resume)}

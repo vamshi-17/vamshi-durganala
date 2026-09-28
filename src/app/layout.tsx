@@ -3,6 +3,7 @@ import { Bricolage_Grotesque, JetBrains_Mono } from "next/font/google";
 import { Analytics } from "@/components/analytics";
 import { MotionProvider } from "@/components/motion-provider";
 import { SmoothScroll } from "@/components/smooth-scroll";
+import { SITE_URL } from "@/lib/sections";
 import "./globals.css";
 
 const bricolage = Bricolage_Grotesque({
@@ -17,7 +18,9 @@ const description =
   "Full stack engineer in Charlotte, NC building secure, event-driven systems with Java, Spring Boot, Kafka, React and AWS.";
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://vamshi-17.github.io/vamshi-portfolio/"),
+  metadataBase: new URL(SITE_URL),
+  // Every section route (/about/, …) is the same page, so all of them declare the home page as canonical.
+  alternates: { canonical: SITE_URL },
   title,
   description,
   keywords: ["Vamshi Krishna Durganala", "Full Stack Engineer", "Java", "Spring Boot", "Kafka", "React", "AWS", "Charlotte"],

@@ -4,7 +4,7 @@ import { useEffect, useRef } from "react";
 import { AnimatePresence, motion, useMotionValue, useScroll, useSpring, useTransform } from "framer-motion";
 import { hops } from "@/data/profile";
 import { useActiveSection } from "@/lib/use-active-section";
-import { scrollToId } from "@/components/smooth-scroll";
+import { navigateTo } from "@/components/smooth-scroll";
 import { cn } from "@/lib/utils";
 
 const GAP = 56; // px between nodes
@@ -68,7 +68,7 @@ export function SystemRail() {
           <button
             key={hop.id}
             type="button"
-            onClick={() => scrollToId(hop.id)}
+            onClick={() => navigateTo(hop.id)}
             className="group absolute left-0 flex -translate-y-1/2 items-center gap-3"
             style={{ top: i * GAP }}
             aria-label={`Go to ${hop.layer}`}
