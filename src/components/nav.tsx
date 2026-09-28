@@ -8,6 +8,7 @@ import { asset, cn } from "@/lib/utils";
 import { useActiveSection } from "@/lib/use-active-section";
 import { ease } from "@/components/ui/reveal";
 import { openPalette } from "@/components/command-palette";
+import { SectionLink } from "@/components/ui/section-link";
 
 const links = hops.slice(1);
 
@@ -30,18 +31,18 @@ export function Nav() {
         )}
       >
         <nav className="mx-auto flex h-16 max-w-6xl items-center justify-between gap-4 px-5 md:px-6">
-          <a href="#home" className="font-mono text-sm" aria-label="Back to top">
+          <SectionLink to="home" className="font-mono text-sm" aria-label="Back to top">
             <span className="text-lime">vamshi</span>
             <span className="text-subtle">@prod</span>
             <span className="text-muted">:~$</span>
             <span className="ml-1 inline-block h-4 w-2 translate-y-0.5 animate-blink bg-lime" />
-          </a>
+          </SectionLink>
 
           <ul className="hidden items-center gap-1 md:flex">
             {links.map(({ id, route }) => (
               <li key={id}>
-                <a
-                  href={`#${id}`}
+                <SectionLink
+                  to={id}
                   className={cn(
                     "relative block px-3 py-2 font-mono text-[13px] transition-colors",
                     active === id ? "text-lime" : "text-muted hover:text-fg",
@@ -55,7 +56,7 @@ export function Nav() {
                       transition={{ type: "spring", stiffness: 400, damping: 34 }}
                     />
                   )}
-                </a>
+                </SectionLink>
               </li>
             ))}
           </ul>
@@ -109,10 +110,10 @@ export function Nav() {
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.15 + i * 0.05, ease, duration: 0.5 }}
                 >
-                  <a href={`#${id}`} className="flex items-baseline justify-between border-b border-line py-4">
+                  <SectionLink to={id} className="flex items-baseline justify-between border-b border-line py-4">
                     <span className="font-display text-4xl">{route}</span>
                     <span className="font-mono text-xs text-subtle">{layer}</span>
-                  </a>
+                  </SectionLink>
                 </motion.li>
               ))}
             </ul>

@@ -5,7 +5,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import { ArrowDownToLine, CornerDownLeft, Copy, Github, Hash, Linkedin, Mail, Search } from "lucide-react";
 import { hops, profile } from "@/data/profile";
 import { asset, cn, copyText } from "@/lib/utils";
-import { scrollToId } from "@/components/smooth-scroll";
+import { navigateTo } from "@/components/smooth-scroll";
 
 const OPEN_EVENT = "palette:open";
 export const openPalette = () => window.dispatchEvent(new Event(OPEN_EVENT));
@@ -20,7 +20,7 @@ function useActions(): Action[] {
         label: `Go to ${h.route === "/" ? "/home" : h.route}`,
         hint: h.layer,
         icon: Hash,
-        run: () => scrollToId(h.id),
+        run: () => navigateTo(h.id),
       })),
       { id: "copy", label: "Copy email address", hint: profile.email, icon: Copy, run: () => void copyText(profile.email) },
       { id: "mail", label: "Send an email", hint: "mailto", icon: Mail, run: () => (window.location.href = `mailto:${profile.email}`) },

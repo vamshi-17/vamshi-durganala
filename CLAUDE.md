@@ -60,9 +60,18 @@ an item in some layer or it silently won't highlight), `endpoints` (hero API con
 - No server features: no API routes, no server actions, no runtime env. Anything dynamic runs client-side
   (e.g. the contact form posts directly to Web3Forms).
 
+**Section URLs (no `#`).** Every section has a real route: `app/page.tsx` is `/` and `app/[section]/page.tsx`
+statically generates `/about/`, `/experience/`, … — each renders the same `components/site.tsx`, told which section
+to open. `lib/sections.ts` maps ids ↔ paths (base-path aware) and holds `SITE_URL`; all routes declare the home page
+as canonical (root layout). Never use `href="#id"`: link with `<SectionLink to="about">` or call `navigateTo(id)`
+(smooth scroll + `pushState`). `components/route-sync.tsx` jumps to the URL's section on load (re-aiming while the
+layout grows after hydration), replaces the URL/title as the reader scrolls, handles back/forward, and upgrades legacy
+`#about` links.
+
 **Client-side runtime pieces.**
-- `components/smooth-scroll.tsx` owns the single Lenis instance; programmatic scrolling must use its `scrollToId()`.
-  Scrollable inner elements (palette list, textareas) need `data-lenis-prevent`.
+- `components/smooth-scroll.tsx` owns the single Lenis instance; programmatic scrolling must use its `scrollToId()`
+  (or `navigateTo()` when the URL should change). Scrollable inner elements (palette list, textareas) need
+  `data-lenis-prevent`.
 - `lib/use-active-section.ts` (IntersectionObserver) drives the active state in both `Nav` and `SystemRail`.
 - `CommandPalette` opens on Ctrl/⌘+K or via the `openPalette()` event helper.
 - `components/analytics.tsx` loads GA4 (`G-CSC26DCGT1`) in production builds only; use its `track()` for custom
