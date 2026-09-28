@@ -1,10 +1,7 @@
 export const profile = {
   name: "Vamshi Krishna Durganala",
   firstName: "Vamshi",
-  shortName: "VKD",
-  roles: ["Full Stack Developer", "Java & Spring Boot Engineer", "React Developer", "Cloud-Native Builder"],
-  tagline:
-    "I build secure, event-driven enterprise systems end-to-end — from Spring Boot microservices and Kafka pipelines to polished React interfaces running on AWS.",
+  role: "Full Stack Engineer",
   email: "durganalavamshikrishna@gmail.com",
   phone: "+1 (980) 613-7558",
   location: "Charlotte, NC",
@@ -15,177 +12,251 @@ export const profile = {
   },
 };
 
-export const stats = [
-  { value: 6, suffix: "+", label: "Years building software" },
-  { value: 14, suffix: "+", label: "Microservices in production" },
-  { value: 15, suffix: "+", label: "Legacy forms modernized" },
-  { value: 3, suffix: "", label: "Companies, 2 continents" },
+/** The page is modelled as a request travelling through a system; each section is one hop. */
+export const hops = [
+  { id: "home", layer: "client", route: "/" },
+  { id: "about", layer: "gateway", route: "/about" },
+  { id: "experience", layer: "services", route: "/experience" },
+  { id: "projects", layer: "events", route: "/projects" },
+  { id: "stack", layer: "data", route: "/stack" },
+  { id: "contact", layer: "response", route: "/contact" },
+] as const;
+
+/** Endpoints the hero console can "call". */
+export const endpoints = {
+  "/engineer": {
+    latency: 38,
+    body: {
+      name: "Vamshi Krishna Durganala",
+      role: "Full Stack Engineer",
+      experience: "6+ years",
+      location: "Charlotte, NC",
+      focus: ["Java / Spring Boot", "React", "Kafka", "AWS"],
+      status: "open_to_work",
+    },
+  },
+  "/now": {
+    latency: 24,
+    body: {
+      day_job: "Election platform @ TGS Technology",
+      services: 14,
+      side_project: "Job discovery platform",
+      learning: ["LLM tooling", "Platform engineering"],
+      coffee: "required",
+    },
+  },
+  "/stack": {
+    latency: 41,
+    body: {
+      backend: ["Java 17", "Spring Boot", "Kafka", "Node.js"],
+      frontend: ["React", "Angular", "TypeScript"],
+      data: ["SQL Server", "PostgreSQL", "Redis", "MongoDB"],
+      cloud: ["AWS EKS", "Docker", "ArgoCD"],
+      certified: "AWS Solutions Architect",
+    },
+  },
+} as const;
+
+export type EndpointPath = keyof typeof endpoints;
+
+export const logLines = [
+  ["200", "GET", "/experience", "6+ years across 3 companies"],
+  ["201", "POST", "/microservices", "14+ running in production"],
+  ["202", "PUBLISH", "kafka://domain-events", "async, idempotent"],
+  ["200", "GET", "/certifications", "AWS Solutions Architect"],
+  ["204", "DELETE", "/legacy/jsp-forms", "15+ migrated to Angular"],
+  ["200", "GET", "/education", "M.S. IT · UNC Charlotte"],
+  ["201", "POST", "/side-projects", "job discovery platform"],
+  ["200", "GET", "/location", "Charlotte, NC"],
+] as const;
+
+export const headers: [string, string][] = [
+  ["X-Role", "Full Stack Engineer"],
+  ["X-Location", "Charlotte, NC (ET)"],
+  ["X-Experience", "6+ years · since 2020"],
+  ["X-Education", "M.S. Information Technology, UNC Charlotte"],
+  ["X-Certified", "AWS Solutions Architect – Associate, Azure AZ-900"],
+  ["X-Works-With", "GitHub Copilot, Claude Code"],
+  ["X-Status", "open_to_work"],
 ];
 
-export const about = [
-  "I'm a software developer who enjoys the whole stack — designing REST APIs and data models, wiring up event-driven workflows, securing them properly, and then building the interfaces people actually use.",
-  "Right now I work on an enterprise Election Management System at TGS Technology: 14+ Java 17 / Spring Boot microservices, Kafka messaging, Keycloak-backed auth, and a React + TypeScript frontend, deployed on AWS EKS.",
-  "I care about systems that are observable, tested and boring in production. Lately I've also been pairing with GitHub Copilot and Claude Code to move faster on debugging, refactoring and test generation.",
-];
+export type CommitType = "feat" | "perf" | "sec" | "test" | "ops" | "refactor";
 
-export type Job = {
-  role: string;
+export type Service = {
+  id: string;
   company: string;
+  role: string;
   location: string;
   period: string;
-  current?: boolean;
+  running?: boolean;
   summary: string;
-  highlights: string[];
+  changelog: [CommitType, string][];
   stack: string[];
 };
 
-export const experience: Job[] = [
+export const services: Service[] = [
   {
+    id: "tgs-technology",
+    company: "TGS Technology",
     role: "Full Stack Developer",
-    company: "TGS Technology LLC",
     location: "Charlotte, NC",
-    period: "Jul 2024 — Present",
-    current: true,
+    period: "Jul 2024 — now",
+    running: true,
     summary:
-      "Building an enterprise Election Management System of 14+ microservices with Java 17, Spring Boot and React.",
-    highlights: [
-      "Designed RESTful APIs and service-to-service integrations with Spring MVC, Spring Data JPA/Hibernate, DTO validation and OpenAPI/Swagger.",
-      "Implemented Apache Kafka producers and consumers for asynchronous workflows — event-driven service communication, portal updates and notifications.",
-      "Built transactional data access on SQL Server with Liquibase migrations, JPQL, pagination, entity relationships and Redis caching.",
-      "Secured workflows with Spring Security, Keycloak, JWT, OAuth 2.0, MFA and RBAC.",
-      "Shipped full-stack features in React, TypeScript, Material UI, Zustand, React Hook Form and TanStack Query.",
-      "Wrote JUnit, Mockito, Jest and RTL suites; load-tested with JMeter; deployed on AWS EKS via Jenkins, SonarQube and ArgoCD.",
+      "Building an enterprise election management platform: 14+ Java 17 / Spring Boot microservices behind a React + TypeScript frontend, running on AWS EKS.",
+    changelog: [
+      ["feat", "REST APIs and service-to-service integrations with Spring MVC, JPA/Hibernate, DTO validation and OpenAPI"],
+      ["feat", "Kafka producers & consumers for async, event-driven workflows, portal updates and notifications"],
+      ["perf", "Transactional data access on SQL Server with JPQL, pagination, Liquibase migrations and Redis caching"],
+      ["sec", "Auth flows with Spring Security, Keycloak, OAuth 2.0, JWT, MFA and role-based access control"],
+      ["feat", "Full-stack features in React, Material UI, Zustand, React Hook Form and TanStack Query"],
+      ["test", "JUnit, Mockito, Jest and RTL suites; API and load testing with Postman and JMeter"],
+      ["ops", "Docker → ECR → EKS deployments through Jenkins, SonarQube and ArgoCD; production troubleshooting"],
     ],
-    stack: ["Java 17", "Spring Boot", "Kafka", "React", "TypeScript", "SQL Server", "Redis", "Keycloak", "AWS EKS", "ArgoCD"],
+    stack: ["Java 17", "Spring Boot", "Kafka", "React", "TypeScript", "SQL Server", "Redis", "Keycloak", "EKS", "ArgoCD"],
   },
   {
+    id: "cognizant",
+    company: "Cognizant",
     role: "Programmer Analyst",
-    company: "Cognizant Technology Solutions",
     location: "Tamil Nadu, India",
     period: "Apr 2021 — Dec 2022",
     summary:
-      "Developed an internal engineering platform for Telstra powering test automation, reporting and monitoring.",
-    highlights: [
-      "Built backend services with Java 11, Spring Boot, Spring Data JPA and REST APIs across application modules.",
-      "Created React + TypeScript dashboards with role-based views, charts and live test-execution trends for engineering teams.",
-      "Implemented Oracle-backed reporting with tuned queries, indexing, pagination and transactional operations.",
-      "Automated recurring operational tasks with Python scripts for reporting, monitoring and infrastructure ops.",
-      "Tested with JUnit, Mockito, Selenium, Cucumber and Jest; monitored production with Splunk and CloudWatch.",
+      "Built an internal engineering platform for Telstra that gave teams live visibility into automated test runs and application health.",
+    changelog: [
+      ["feat", "Backend services in Java 11 and Spring Boot with validation, exception handling and integrations"],
+      ["feat", "React + TypeScript dashboards with role-based views, charts and live test-execution trends"],
+      ["perf", "Oracle reporting with tuned queries, indexing, pagination and transactional operations"],
+      ["ops", "Python automation for reporting, monitoring and infrastructure chores"],
+      ["sec", "Spring Security + RBAC to restrict features and data by role"],
+      ["test", "JUnit, Mockito, Selenium, Cucumber and Jest; monitored with Splunk and CloudWatch"],
     ],
-    stack: ["Java 11", "Spring Boot", "React", "TypeScript", "Oracle", "Python", "Docker", "Kubernetes", "Splunk"],
+    stack: ["Java 11", "Spring Boot", "React", "TypeScript", "Oracle", "Python", "Kubernetes", "Splunk"],
   },
   {
-    role: "Programmer Analyst",
+    id: "rk-infosystems",
     company: "RK Info Systems",
+    role: "Programmer Analyst",
     location: "Hyderabad, India",
     period: "May 2020 — Apr 2021",
-    summary:
-      "Developed and modernized enterprise web applications with Java, Spring Boot and Angular.",
-    highlights: [
-      "Modernized 15+ legacy JSP forms into reusable Angular components integrated with Spring Boot REST APIs.",
-      "Implemented Hibernate/JDBC data access — entity mappings, CRUD, joins and multi-step transactions.",
-      "Built backend business logic, request validation and exception handling across functional modules.",
-      "Wrote JUnit tests and partnered with QA on defect resolution and release support.",
+    summary: "Where it started: enterprise Java web apps, and a big migration from legacy JSP to Angular.",
+    changelog: [
+      ["refactor", "Modernised 15+ legacy JSP forms into reusable Angular components on Spring Boot REST APIs"],
+      ["feat", "Hibernate/JDBC data access: entity mappings, CRUD, joins and multi-step transactions"],
+      ["feat", "Backend business logic, request validation and exception handling across modules"],
+      ["test", "JUnit coverage and defect triage with QA through release support"],
     ],
-    stack: ["Java", "Spring Boot", "Spring MVC", "Hibernate", "Angular", "TypeScript", "SQL"],
+    stack: ["Java", "Spring Boot", "Hibernate", "Angular", "TypeScript", "SQL"],
   },
 ];
 
 export type Project = {
-  title: string;
-  context: string;
-  description: string;
-  points: string[];
+  id: "jobs" | "expense" | "hemo";
+  index: string;
+  name: string;
+  tagline: string;
+  problem: string;
+  built: string[];
   stack: string[];
-  accent: string;
+  meta: string;
+  links: { label: string; href: string }[];
 };
 
 export const projects: Project[] = [
   {
-    title: "Election Management System",
-    context: "TGS Technology · 2024 — Now",
-    description:
-      "A secure, event-driven platform that runs complex election workflows across 14+ Spring Boot microservices.",
-    points: ["Kafka event pipelines", "Keycloak + MFA + RBAC", "Deployed on AWS EKS with ArgoCD"],
-    stack: ["Spring Boot", "Kafka", "React", "SQL Server", "Redis", "EKS"],
-    accent: "from-violet-500/30 via-fuchsia-500/10",
+    id: "jobs",
+    index: "01",
+    name: "Job Discovery Platform",
+    tagline: "See new software jobs minutes after they're posted, not hours.",
+    problem:
+      "By the time a posting shows up on the big job boards, it's often 5–10 hours old and already has hundreds of applicants. This goes straight to the source.",
+    built: [
+      "Ingest worker polling Greenhouse & Workday via pluggable source adapters",
+      "Normalise → dedupe pipeline into one Postgres schema (Drizzle ORM)",
+      "Keyword profiles, match scoring, job status tracking and push alerts",
+      "Groundwork for AI résumé tailoring with the Claude API",
+    ],
+    stack: ["TypeScript", "Next.js", "Node.js", "PostgreSQL", "Drizzle", "Docker", "Claude API"],
+    meta: "2026 · in active development",
+    links: [],
   },
   {
-    title: "Telstra Engineering Platform",
-    context: "Cognizant · 2021 — 2022",
-    description:
-      "Internal platform giving engineering teams real-time visibility into automated test runs and application health.",
-    points: ["Role-based live dashboards", "Oracle reporting engine", "Python ops automation"],
-    stack: ["Spring Boot", "React", "TypeScript", "Oracle", "Python"],
-    accent: "from-cyan-500/30 via-sky-500/10",
+    id: "expense",
+    index: "02",
+    name: "Expense App",
+    tagline: "Budgets, salary and spending in one clear dashboard.",
+    problem:
+      "A full MERN app for tracking where money goes: set budgets by category, log expenses against them and see the month at a glance.",
+    built: [
+      "Express REST API with JWT auth middleware and bcrypt password hashing",
+      "Mongoose models for budgets, categories, salary and expenses",
+      "Joi request validation; Jest + Supertest API tests",
+      "React + Material UI client with a dashboard of monthly totals",
+    ],
+    stack: ["Node.js", "Express", "MongoDB", "JWT", "React", "Material UI", "Jest"],
+    meta: "2023 · full stack",
+    links: [
+      { label: "API", href: "https://github.com/vamshi-17/expense-app-server" },
+      { label: "Client", href: "https://github.com/vamshi-17/expense-app-client" },
+    ],
   },
   {
-    title: "JSP → Angular Modernization",
-    context: "RK Info Systems · 2020 — 2021",
-    description:
-      "Migrated 15+ legacy JSP forms to reusable Angular components without breaking existing business behaviour.",
-    points: ["Reusable component library", "Spring Boot REST integration", "Zero functional regressions"],
-    stack: ["Angular", "TypeScript", "Spring Boot", "Hibernate"],
-    accent: "from-emerald-500/30 via-teal-500/10",
+    id: "hemo",
+    index: "03",
+    name: "Hemo",
+    tagline: "An Android app connecting patients, doctors and pharmacies.",
+    problem:
+      "Four roles, one app: admins onboard doctors, patients book appointments and share symptoms, doctors prescribe, and pharmacies receive prescriptions directly.",
+    built: [
+      "Role-based flows for Admin, Doctor, Patient and Pharmacy",
+      "Appointments, symptom reports, prescriptions and in-app messaging",
+      "Firebase Auth, Realtime Database and Storage for images",
+      "Native Android UI in Java with RecyclerView lists and notifications",
+    ],
+    stack: ["Java", "Android", "Firebase Auth", "Realtime DB", "Cloud Storage"],
+    meta: "Android · mobile",
+    links: [{ label: "Code", href: "https://github.com/vamshi-17/hemo" }],
   },
 ];
 
-export const skillGroups = [
-  { title: "Languages", icon: "CodeXml", items: ["Java", "Python", "JavaScript (ES6+)", "TypeScript"] },
+/** Skills arranged as layers of a system, top (user) to bottom (infrastructure). */
+export const layers = [
+  { id: "client", name: "Client", items: ["React", "Angular", "Next.js", "TypeScript", "Material UI", "Zustand", "TanStack Query", "React Hook Form", "Android"] },
+  { id: "edge", name: "Edge & security", items: ["API Gateway", "Keycloak", "OAuth 2.0", "MFA", "JWT", "Spring Security", "RBAC"] },
+  { id: "services", name: "Services", items: ["Java 17", "Spring Boot", "Spring MVC", "Spring Data JPA", "Hibernate", "Node.js", "Express", "Resilience4j", "OpenAPI", "Python"] },
+  { id: "events", name: "Messaging", items: ["Apache Kafka", "Quartz Scheduler", "Push alerts"] },
+  { id: "data", name: "Data", items: ["SQL Server", "PostgreSQL", "Oracle", "MySQL", "MongoDB", "Redis", "Liquibase", "Drizzle", "Firebase"] },
+  { id: "platform", name: "Platform", items: ["Docker", "Kubernetes", "AWS EKS", "ECR", "EC2", "RDS", "Lambda", "S3", "Jenkins", "ArgoCD"] },
+  { id: "observe", name: "Observability", items: ["Prometheus", "Grafana", "OpenSearch", "Splunk", "CloudWatch", "Logback + MDC"] },
+  { id: "quality", name: "Quality", items: ["JUnit", "Mockito", "Jest", "React Testing Library", "Selenium", "Cucumber", "JMeter", "SonarQube"] },
+] as const;
+
+/** Real request paths through the stack; each step must match an item in `layers`. */
+export const traces = [
   {
-    title: "Backend",
-    icon: "Server",
-    items: ["Spring Boot", "Spring MVC", "Spring Security", "Spring Data JPA", "Hibernate", "JDBC", "REST APIs", "Microservices", "Apache Kafka", "Resilience4j", "OpenAPI / Swagger", "Quartz"],
+    id: "login",
+    label: "Sign in with MFA",
+    note: "React login → Keycloak issues tokens after MFA → Spring Security validates the JWT and enforces roles → session data cached in Redis.",
+    path: ["React", "Keycloak", "MFA", "OAuth 2.0", "JWT", "Spring Security", "RBAC", "Spring Boot", "Redis", "SQL Server"],
   },
   {
-    title: "Frontend",
-    icon: "LayoutTemplate",
-    items: ["React", "Angular", "Material UI", "Zustand", "React Hook Form", "TanStack Query", "HTML5", "CSS3"],
-  },
-  { title: "Data", icon: "Database", items: ["SQL Server", "PostgreSQL", "MySQL", "Oracle", "MongoDB", "Redis"] },
-  {
-    title: "Cloud & DevOps",
-    icon: "Cloud",
-    items: ["AWS (EKS, EC2, ECR, RDS, Lambda, S3, IAM, API Gateway)", "Docker", "Kubernetes", "ArgoCD", "Jenkins", "CI/CD"],
+    id: "event",
+    label: "Publish a domain event",
+    note: "A service commits a transaction, publishes to Kafka, and consumers update the portal and fan out notifications with retries.",
+    path: ["Spring Boot", "Spring Data JPA", "SQL Server", "Apache Kafka", "Resilience4j", "Push alerts", "React"],
   },
   {
-    title: "Observability",
-    icon: "Activity",
-    items: ["Prometheus", "Grafana", "OpenSearch", "Splunk", "CloudWatch", "SLF4J / Logback / MDC"],
-  },
-  { title: "Security", icon: "ShieldCheck", items: ["Spring Security", "Keycloak", "JWT", "OAuth 2.0", "MFA", "RBAC"] },
-  {
-    title: "Testing",
-    icon: "FlaskConical",
-    items: ["JUnit", "Mockito", "JMeter", "Selenium", "Cucumber", "Jest", "React Testing Library", "SonarQube"],
+    id: "ship",
+    label: "Ship to production",
+    note: "Tests and quality gates in CI, image pushed to ECR, ArgoCD syncs to EKS, and dashboards confirm it's healthy.",
+    path: ["JUnit", "Jest", "SonarQube", "Jenkins", "Docker", "ECR", "ArgoCD", "AWS EKS", "Prometheus", "Grafana"],
   },
   {
-    title: "Tooling",
-    icon: "Wrench",
-    items: ["Git", "Maven", "Nexus", "Liquibase", "Postman", "Jira", "IntelliJ", "Linux", "GitHub Copilot", "Claude Code"],
+    id: "jobs",
+    label: "Find a fresh job",
+    note: "My side project: a Node worker pulls postings, dedupes them into Postgres via Drizzle, and a Next.js dashboard pushes alerts.",
+    path: ["Node.js", "PostgreSQL", "Drizzle", "Next.js", "React", "Push alerts", "Docker"],
   },
 ] as const;
 
-export const marquee = [
-  "Java", "Spring Boot", "Kafka", "React", "TypeScript", "Angular", "AWS", "Kubernetes", "Docker",
-  "PostgreSQL", "Redis", "Keycloak", "ArgoCD", "Jenkins", "Grafana", "Python",
-];
-
-export const certifications = [
-  { name: "AWS Certified Solutions Architect", detail: "Associate" },
-  { name: "Microsoft Azure Fundamentals", detail: "AZ-900" },
-  { name: "Programming, Data Structures & Algorithms", detail: "NPTEL" },
-];
-
-export const education = [
-  { degree: "M.S. Information Technology", school: "University of North Carolina at Charlotte", period: "2023 — 2024" },
-  { degree: "B.Tech Electronics & Communication", school: "JNTU Hyderabad", period: "2017 — 2021" },
-];
-
-export const nav = [
-  { id: "about", label: "About" },
-  { id: "experience", label: "Experience" },
-  { id: "work", label: "Work" },
-  { id: "skills", label: "Skills" },
-  { id: "contact", label: "Contact" },
-];
+export type TraceId = (typeof traces)[number]["id"];
