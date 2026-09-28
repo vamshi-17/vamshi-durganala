@@ -2,9 +2,9 @@
 
 import { useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { ArrowDownToLine, ArrowUpRight, Check, Copy, Github, Linkedin, LoaderCircle, Mail, Play } from "lucide-react";
+import { ArrowDownToLine, ArrowUpRight, Check, Copy, Github, Linkedin, LoaderCircle, Mail, Play, X } from "lucide-react";
 import { profile } from "@/data/profile";
-import { asset, cn } from "@/lib/utils";
+import { asset, cn, copyText } from "@/lib/utils";
 import { Mark, SectionHeading } from "@/components/ui/section-heading";
 import { Reveal } from "@/components/ui/reveal";
 import { track } from "@/components/analytics";
@@ -18,14 +18,13 @@ const field =
   "min-w-0 flex-1 border-b border-dashed border-line-strong bg-transparent text-lime outline-none placeholder:text-subtle focus:border-lime";
 
 function CopyEmail() {
-  const [copied, setCopied] = useState(false);
+  const [copied, setCopied] = useState<"idle" | "ok" | "failed">("idle");
   return (
     <button
       type="button"
       onClick={async () => {
-        await navigator.clipboard.writeText(profile.email);
-        setCopied(true);
-        setTimeout(() => setCopied(false), 1800);
+        setCopied((await copyText(profile.email)) ? "ok" : "failed");
+        setTimeout(() => setCopied("idle"), 1800);
       }}
       className="group flex w-full items-center gap-4 border-b border-line py-5 text-left"
     >
@@ -35,10 +34,15 @@ function CopyEmail() {
         <span className="block truncate text-lg transition group-hover:text-lime">{profile.email}</span>
       </span>
       <AnimatePresence mode="wait" initial={false}>
-        <motion.span key={String(copied)} initial={{ scale: 0.6, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.6, opacity: 0 }}>
-          {copied ? <Check className="size-4 text-lime" /> : <Copy className="size-4 text-muted" />}
+        <motion.span key={copied} initial={{ scale: 0.6, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.6, opacity: 0 }}>
+          {copied === "ok" && <Check className="size-4 text-lime" />}
+          {copied === "failed" && <X className="size-4 text-err" />}
+          {copied === "idle" && <Copy className="size-4 text-muted" />}
         </motion.span>
       </AnimatePresence>
+      <span className="sr-only" aria-live="polite">
+        {copied === "ok" ? "Email copied" : copied === "failed" ? "Couldn't copy — please select the address" : ""}
+      </span>
     </button>
   );
 }
