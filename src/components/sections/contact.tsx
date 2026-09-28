@@ -7,6 +7,7 @@ import { profile } from "@/data/profile";
 import { asset, cn } from "@/lib/utils";
 import { Mark, SectionHeading } from "@/components/ui/section-heading";
 import { Reveal } from "@/components/ui/reveal";
+import { track } from "@/components/analytics";
 
 // Free key from https://web3forms.com, provided at build time; without it the form falls back to mailto.
 const WEB3FORMS_KEY = process.env.NEXT_PUBLIC_WEB3FORMS_KEY;
@@ -51,6 +52,7 @@ export function Contact() {
     const data = new FormData(form);
 
     if (!WEB3FORMS_KEY) {
+      track("generate_lead", { method: "mailto" });
       const subject = encodeURIComponent(`Hello from ${data.get("name")}`);
       const body = encodeURIComponent(`${data.get("message")}\n\n— ${data.get("name")} (${data.get("email")})`);
       window.location.href = `mailto:${profile.email}?subject=${subject}&body=${body}`;
@@ -65,6 +67,7 @@ export function Contact() {
       const json = await res.json();
       if (!json.success) throw new Error(json.message);
       setStatus("sent");
+      track("generate_lead", { method: "contact_form" });
       form.reset();
     } catch {
       setStatus("error");
