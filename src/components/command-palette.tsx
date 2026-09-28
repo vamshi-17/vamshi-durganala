@@ -4,7 +4,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { ArrowDownToLine, CornerDownLeft, Copy, Github, Hash, Linkedin, Mail, Search } from "lucide-react";
 import { hops, profile } from "@/data/profile";
-import { asset, cn } from "@/lib/utils";
+import { asset, cn, copyText } from "@/lib/utils";
 import { scrollToId } from "@/components/smooth-scroll";
 
 const OPEN_EVENT = "palette:open";
@@ -22,7 +22,7 @@ function useActions(): Action[] {
         icon: Hash,
         run: () => scrollToId(h.id),
       })),
-      { id: "copy", label: "Copy email address", hint: profile.email, icon: Copy, run: () => navigator.clipboard.writeText(profile.email) },
+      { id: "copy", label: "Copy email address", hint: profile.email, icon: Copy, run: () => void copyText(profile.email) },
       { id: "mail", label: "Send an email", hint: "mailto", icon: Mail, run: () => (window.location.href = `mailto:${profile.email}`) },
       { id: "resume", label: "Download résumé", hint: "PDF", icon: ArrowDownToLine, run: () => window.open(asset(profile.resume), "_blank") },
       { id: "github", label: "Open GitHub", hint: "@vamshi-17", icon: Github, run: () => window.open(profile.socials.github, "_blank") },
@@ -69,7 +69,8 @@ export function CommandPalette() {
   const run = (a?: Action) => {
     if (!a) return;
     setOpen(false);
-    setTimeout(a.run, 120);
+    // Run synchronously inside the click/keypress so window.open isn't treated as an unsolicited popup.
+    a.run();
   };
 
   return (

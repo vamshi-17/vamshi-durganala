@@ -1,12 +1,20 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { ArrowUp } from "lucide-react";
 import { profile } from "@/data/profile";
 import { scrollToId } from "@/components/smooth-scroll";
 import { ease } from "@/components/ui/reveal";
 
+const BUILD_YEAR = new Date().getFullYear();
+
 export function Footer() {
+  // The static HTML carries the build year; correct it after hydration so an old build never shows a stale year
+  // (and never mismatches during hydration).
+  const [year, setYear] = useState(BUILD_YEAR);
+  useEffect(() => setYear(new Date().getFullYear()), []);
+
   return (
     <footer className="relative overflow-hidden">
       <div className="mx-auto max-w-6xl px-5 md:px-6">
@@ -33,7 +41,7 @@ export function Footer() {
           </span>
           <span className="hidden md:inline">next.js · framer motion · lenis · tailwind</span>
           <span className="flex items-center gap-4">
-            <span>© {new Date().getFullYear()} {profile.name}</span>
+            <span>© {year} {profile.name}</span>
             <button
               type="button"
               onClick={() => scrollToId("home")}

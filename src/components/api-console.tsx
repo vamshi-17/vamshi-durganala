@@ -118,12 +118,12 @@ export function ApiConsole() {
           {nodes.map((n, i) => (
             <div key={n} className="flex w-14 flex-col items-center gap-2">
               <motion.span
-                key={`${n}-${run}`}
-                initial={false}
+                // Remount per run *and* phase so the pulse keyframes play again on the return trip.
+                key={`${n}-${run}-${phase}`}
                 animate={
-                  phase === "request" || phase === "response"
+                  busy
                     ? { backgroundColor: ["#121311", "#c8f31d", "#121311"], borderColor: ["#62635d", "#c8f31d", "#62635d"] }
-                    : {}
+                    : undefined
                 }
                 transition={{
                   duration: 0.35,
