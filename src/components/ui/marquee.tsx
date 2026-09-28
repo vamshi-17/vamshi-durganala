@@ -1,22 +1,29 @@
-import { cn } from "@/lib/utils";
+import { logLines } from "@/data/profile";
 
-/** Infinite horizontal ticker; content is duplicated so the loop is seamless. */
-export function Marquee({ items, className, reverse }: { items: readonly string[]; className?: string; reverse?: boolean }) {
+const statusColor: Record<string, string> = {
+  "200": "text-lime",
+  "201": "text-lime",
+  "202": "text-warn",
+  "204": "text-muted",
+};
+
+/** Infinite ticker of "access log" lines about me; duplicated for a seamless loop. */
+export function LogTicker() {
   return (
-    <div className={cn("group flex overflow-hidden mask-fade-x", className)}>
+    <div className="group flex overflow-hidden border-y border-line py-3 mask-fade-x">
       {[0, 1].map((copy) => (
         <ul
           key={copy}
           aria-hidden={copy === 1}
-          className={cn(
-            "flex shrink-0 animate-marquee items-center gap-10 pr-10 group-hover:[animation-play-state:paused]",
-            reverse && "[animation-direction:reverse]",
-          )}
+          className="flex shrink-0 animate-ticker items-center gap-10 pr-10 group-hover:[animation-play-state:paused]"
         >
-          {items.map((item) => (
-            <li key={item} className="flex items-center gap-10 whitespace-nowrap font-mono text-sm uppercase tracking-widest text-subtle">
-              {item}
-              <span className="size-1 rounded-full bg-accent/60" />
+          {logLines.map(([status, method, path, note]) => (
+            <li key={path} className="flex items-center gap-2.5 whitespace-nowrap font-mono text-xs">
+              <span className={statusColor[status]}>{status}</span>
+              <span className="text-subtle">{method}</span>
+              <span className="text-fg">{path}</span>
+              <span className="text-subtle">→</span>
+              <span className="text-muted">{note}</span>
             </li>
           ))}
         </ul>

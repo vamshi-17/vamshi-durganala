@@ -1,24 +1,28 @@
 import { Background } from "@/components/background";
-import { Nav } from "@/components/nav";
+import { CommandPalette } from "@/components/command-palette";
 import { Footer } from "@/components/footer";
-import { Hero } from "@/components/sections/hero";
+import { Nav } from "@/components/nav";
+import { SystemRail } from "@/components/system-rail";
 import { About } from "@/components/sections/about";
-import { Experience } from "@/components/sections/experience";
-import { Work } from "@/components/sections/work";
-import { Skills } from "@/components/sections/skills";
 import { Contact } from "@/components/sections/contact";
+import { Experience } from "@/components/sections/experience";
+import { Hero } from "@/components/sections/hero";
+import { Projects } from "@/components/sections/projects";
+import { Stack } from "@/components/sections/stack";
 
 export default function Home() {
   return (
     <>
       <Background />
       <Nav />
+      <SystemRail />
+      <CommandPalette />
       <main>
         <Hero />
         <About />
         <Experience />
-        <Work />
-        <Skills />
+        <Projects />
+        <Stack />
         <Contact />
       </main>
       <Footer />

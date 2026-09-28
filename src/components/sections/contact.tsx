@@ -2,17 +2,19 @@
 
 import { useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { ArrowUpRight, Check, Copy, Github, Linkedin, LoaderCircle, Send } from "lucide-react";
+import { ArrowDownToLine, ArrowUpRight, Check, Copy, Github, Linkedin, LoaderCircle, Mail, Play } from "lucide-react";
 import { profile } from "@/data/profile";
-import { Accent, SectionHeading } from "@/components/ui/section-heading";
-import { Reveal, ease } from "@/components/ui/reveal";
-import { SpotlightCard } from "@/components/ui/spotlight-card";
-import { Magnetic } from "@/components/ui/magnetic";
+import { asset, cn } from "@/lib/utils";
+import { Mark, SectionHeading } from "@/components/ui/section-heading";
+import { Reveal } from "@/components/ui/reveal";
 
-// Free key from https://web3forms.com — set as a repo secret; without it the form falls back to mailto.
+// Free key from https://web3forms.com, provided at build time; without it the form falls back to mailto.
 const WEB3FORMS_KEY = process.env.NEXT_PUBLIC_WEB3FORMS_KEY;
 
 type Status = "idle" | "sending" | "sent" | "error";
+
+const field =
+  "min-w-0 flex-1 border-b border-dashed border-line-strong bg-transparent text-lime outline-none placeholder:text-subtle focus:border-lime";
 
 function CopyEmail() {
   const [copied, setCopied] = useState(false);
@@ -22,33 +24,23 @@ function CopyEmail() {
       onClick={async () => {
         await navigator.clipboard.writeText(profile.email);
         setCopied(true);
-        setTimeout(() => setCopied(false), 2000);
+        setTimeout(() => setCopied(false), 1800);
       }}
-      className="group flex w-full items-center justify-between gap-4 rounded-2xl border border-line bg-surface/60 p-5 text-left transition hover:border-line-strong"
+      className="group flex w-full items-center gap-4 border-b border-line py-5 text-left"
     >
-      <span className="min-w-0">
-        <span className="block font-mono text-[11px] uppercase tracking-[0.2em] text-muted">Email</span>
-        <span className="mt-1 block truncate text-base md:text-lg">{profile.email}</span>
+      <Mail className="size-5 shrink-0 text-muted transition group-hover:text-lime" />
+      <span className="min-w-0 flex-1">
+        <span className="block font-mono text-[11px] text-subtle">email</span>
+        <span className="block truncate text-lg transition group-hover:text-lime">{profile.email}</span>
       </span>
-      <span className="relative grid size-10 shrink-0 place-items-center rounded-full bg-white/5">
-        <AnimatePresence mode="wait" initial={false}>
-          <motion.span
-            key={copied ? "check" : "copy"}
-            initial={{ scale: 0.5, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
-            exit={{ scale: 0.5, opacity: 0 }}
-            transition={{ duration: 0.15 }}
-          >
-            {copied ? <Check className="size-4 text-emerald-400" /> : <Copy className="size-4" />}
-          </motion.span>
-        </AnimatePresence>
-      </span>
+      <AnimatePresence mode="wait" initial={false}>
+        <motion.span key={String(copied)} initial={{ scale: 0.6, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.6, opacity: 0 }}>
+          {copied ? <Check className="size-4 text-lime" /> : <Copy className="size-4 text-muted" />}
+        </motion.span>
+      </AnimatePresence>
     </button>
   );
 }
-
-const inputClass =
-  "w-full rounded-xl border border-line bg-bg/60 px-4 py-3 text-fg placeholder:text-subtle outline-none transition focus:border-accent/60 focus:ring-4 focus:ring-accent/10";
 
 export function Contact() {
   const [status, setStatus] = useState<Status>("idle");
@@ -59,7 +51,7 @@ export function Contact() {
     const data = new FormData(form);
 
     if (!WEB3FORMS_KEY) {
-      const subject = encodeURIComponent(`Portfolio enquiry from ${data.get("name")}`);
+      const subject = encodeURIComponent(`Hello from ${data.get("name")}`);
       const body = encodeURIComponent(`${data.get("message")}\n\n— ${data.get("name")} (${data.get("email")})`);
       window.location.href = `mailto:${profile.email}?subject=${subject}&body=${body}`;
       return;
@@ -67,7 +59,7 @@ export function Contact() {
 
     setStatus("sending");
     data.append("access_key", WEB3FORMS_KEY);
-    data.append("subject", `Portfolio enquiry from ${data.get("name")}`);
+    data.append("subject", `Portfolio: message from ${data.get("name")}`);
     try {
       const res = await fetch("https://api.web3forms.com/submit", { method: "POST", body: data });
       const json = await res.json();
@@ -79,132 +71,139 @@ export function Contact() {
     }
   }
 
+  const channels = [
+    { href: profile.socials.linkedin, label: "linkedin", value: "in/vamshi-krishna-durganala", icon: Linkedin },
+    { href: profile.socials.github, label: "github", value: "@vamshi-17", icon: Github },
+    { href: asset(profile.resume), label: "résumé", value: "Vamshi-Krishna-Durganala.pdf", icon: ArrowDownToLine },
+  ];
+
   return (
-    <section id="contact" className="relative py-28 md:py-36">
-      <div className="mx-auto max-w-6xl px-6">
+    <section id="contact" className="relative py-28 md:py-40">
+      <div className="mx-auto max-w-6xl px-5 md:px-6">
         <SectionHeading
-          index="05"
-          eyebrow="Contact"
+          hop="contact"
           title={
             <>
-              Let&apos;s build something <Accent>reliable</Accent> together.
+              Let&apos;s ship <Mark>something.</Mark>
             </>
           }
-          description="Open to full-time full stack and backend roles. Whether it's a role, a project or just a hello — my inbox is open."
+          lede="Hiring for a full stack or backend role, or just want to talk systems? Send a request — I usually respond within a day."
         />
 
-        <div className="grid gap-5 lg:grid-cols-[1fr_1.3fr]">
-          <Reveal className="flex flex-col gap-4">
-            <CopyEmail />
-            {[
-              { href: profile.socials.linkedin, label: "LinkedIn", handle: "in/vamshi-krishna-durganala", icon: Linkedin },
-              { href: profile.socials.github, label: "GitHub", handle: "@vamshi-17", icon: Github },
-            ].map(({ href, label, handle, icon: Icon }) => (
-              <a
-                key={label}
-                href={href}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="group flex items-center justify-between gap-4 rounded-2xl border border-line bg-surface/60 p-5 transition hover:border-line-strong"
-              >
-                <span className="flex min-w-0 items-center gap-4">
-                  <Icon className="size-5 shrink-0 text-muted transition group-hover:text-fg" />
-                  <span className="min-w-0">
-                    <span className="block font-mono text-[11px] uppercase tracking-[0.2em] text-muted">{label}</span>
-                    <span className="mt-1 block truncate">{handle}</span>
-                  </span>
+        <div className="grid gap-12 lg:grid-cols-[1.2fr_1fr] lg:gap-16">
+          <Reveal className="min-w-0">
+            <form onSubmit={onSubmit} className="overflow-hidden rounded-xl border border-line-strong bg-surface font-mono text-[13px]">
+              <div className="flex flex-wrap items-center justify-between gap-2 border-b border-line px-4 py-3">
+                <span>
+                  <span className="rounded bg-lime/15 px-2 py-1 text-[11px] font-semibold text-lime">POST</span>{" "}
+                  <span className="text-fg">/api/contact</span>
                 </span>
-                <ArrowUpRight className="size-5 shrink-0 text-muted transition duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5 group-hover:text-fg" />
-              </a>
-            ))}
-            <p className="mt-auto pt-4 text-sm text-muted">
+                <span className="text-[11px] text-subtle">Content-Type: application/json</span>
+              </div>
+
+              <input type="checkbox" name="botcheck" className="hidden" tabIndex={-1} autoComplete="off" />
+
+              <div className="grid grid-cols-[2.25rem_1fr] py-4 leading-8">
+                <div className="select-none text-right text-subtle [&>span]:block">
+                  {[1, 2, 3, 4, 5, 6, 7, 8].map((n) => (
+                    <span key={n} className="pr-3">
+                      {n}
+                    </span>
+                  ))}
+                </div>
+                <div className="pr-4 pl-2">
+                  <div className="text-subtle">{"{"}</div>
+                  <label className="flex items-center gap-2 pl-4">
+                    <span className="shrink-0 text-fg">&quot;name&quot;</span>
+                    <span className="text-subtle">:</span>
+                    <input name="name" required autoComplete="name" placeholder='"Jane Doe"' className={field} />
+                    <span className="text-subtle">,</span>
+                  </label>
+                  <label className="flex items-center gap-2 pl-4">
+                    <span className="shrink-0 text-fg">&quot;email&quot;</span>
+                    <span className="text-subtle">:</span>
+                    <input name="email" type="email" required autoComplete="email" placeholder='"jane@company.com"' className={field} />
+                    <span className="text-subtle">,</span>
+                  </label>
+                  <label className="flex gap-2 pl-4">
+                    <span className="shrink-0 text-fg">&quot;message&quot;</span>
+                    <span className="text-subtle">:</span>
+                    <textarea
+                      name="message"
+                      required
+                      rows={4}
+                      placeholder='"We have a role you might like…"'
+                      className={cn(field, "resize-none border-b-0 leading-8")}
+                      data-lenis-prevent
+                    />
+                  </label>
+                  <div className="text-subtle">{"}"}</div>
+                </div>
+              </div>
+
+              <div className="flex flex-wrap items-center justify-between gap-3 border-t border-line px-4 py-3">
+                <AnimatePresence mode="wait">
+                  <motion.span
+                    key={status}
+                    initial={{ opacity: 0, y: 4 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0 }}
+                    className="text-xs"
+                  >
+                    {status === "idle" && <span className="text-subtle">{WEB3FORMS_KEY ? "ready" : "opens your mail app"}</span>}
+                    {status === "sending" && <span className="text-muted">sending…</span>}
+                    {status === "sent" && (
+                      <span>
+                        <span className="text-lime">201 Created</span> <span className="text-muted">— thanks, talk soon!</span>
+                      </span>
+                    )}
+                    {status === "error" && (
+                      <span>
+                        <span className="text-err">502</span> <span className="text-muted">— please email me directly</span>
+                      </span>
+                    )}
+                  </motion.span>
+                </AnimatePresence>
+                <motion.button
+                  type="submit"
+                  disabled={status === "sending"}
+                  whileTap={{ scale: 0.96 }}
+                  className="flex items-center gap-2 rounded-md bg-lime px-4 py-2 font-sans text-sm font-semibold text-bg transition hover:bg-fg disabled:opacity-60"
+                >
+                  {status === "sending" ? <LoaderCircle className="size-4 animate-spin" /> : <Play className="size-3.5 fill-current" />}
+                  Send request
+                </motion.button>
+              </div>
+            </form>
+          </Reveal>
+
+          <Reveal delay={0.1} className="min-w-0">
+            <p className="font-mono text-xs text-subtle">or reach me directly</p>
+            <div className="mt-2">
+              <CopyEmail />
+              {channels.map(({ href, label, value, icon: Icon }) => (
+                <a
+                  key={label}
+                  href={href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="group flex items-center gap-4 border-b border-line py-5"
+                >
+                  <Icon className="size-5 shrink-0 text-muted transition group-hover:text-lime" />
+                  <span className="min-w-0 flex-1">
+                    <span className="block font-mono text-[11px] text-subtle">{label}</span>
+                    <span className="block truncate text-lg transition group-hover:text-lime">{value}</span>
+                  </span>
+                  <ArrowUpRight className="size-4 text-muted transition group-hover:translate-x-0.5 group-hover:-translate-y-0.5 group-hover:text-lime" />
+                </a>
+              ))}
+            </div>
+            <p className="mt-6 font-mono text-xs text-subtle">
               {profile.location} · {profile.phone}
             </p>
           </Reveal>
-
-          <Reveal delay={0.1}>
-            <SpotlightCard className="p-6 md:p-8">
-              <form onSubmit={onSubmit} className="grid gap-4">
-                {/* honeypot for bots */}
-                <input type="checkbox" name="botcheck" className="hidden" tabIndex={-1} autoComplete="off" />
-                <div className="grid gap-4 sm:grid-cols-2">
-                  <label className="grid gap-2 text-sm text-muted">
-                    Name
-                    <input name="name" required autoComplete="name" placeholder="Jane Doe" className={inputClass} />
-                  </label>
-                  <label className="grid gap-2 text-sm text-muted">
-                    Email
-                    <input
-                      name="email"
-                      type="email"
-                      required
-                      autoComplete="email"
-                      placeholder="jane@company.com"
-                      className={inputClass}
-                    />
-                  </label>
-                </div>
-                <label className="grid gap-2 text-sm text-muted">
-                  Message
-                  <textarea
-                    name="message"
-                    required
-                    rows={6}
-                    placeholder="Tell me about the role or project…"
-                    className={`${inputClass} resize-none`}
-                  />
-                </label>
-
-                <div className="mt-2 flex flex-wrap items-center justify-between gap-4">
-                  <AnimatePresence mode="wait">
-                    {status === "sent" && (
-                      <motion.p key="sent" initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} className="text-sm text-emerald-400">
-                        Thanks! I&apos;ll get back to you soon.
-                      </motion.p>
-                    )}
-                    {status === "error" && (
-                      <motion.p key="error" initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} className="text-sm text-rose-400">
-                        Something went wrong — please email me directly.
-                      </motion.p>
-                    )}
-                  </AnimatePresence>
-                  <Magnetic>
-                    <motion.button
-                      type="submit"
-                      disabled={status === "sending"}
-                      whileTap={{ scale: 0.97 }}
-                      className="group inline-flex items-center gap-2 rounded-full bg-fg px-6 py-3.5 text-sm font-medium text-bg transition hover:bg-white disabled:opacity-60"
-                    >
-                      {status === "sending" ? (
-                        <>
-                          <LoaderCircle className="size-4 animate-spin" /> Sending…
-                        </>
-                      ) : (
-                        <>
-                          Send message
-                          <Send className="size-4 transition-transform duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
-                        </>
-                      )}
-                    </motion.button>
-                  </Magnetic>
-                </div>
-              </form>
-            </SpotlightCard>
-          </Reveal>
         </div>
       </div>
-
-      <Reveal className="mx-auto mt-28 max-w-6xl overflow-hidden px-6">
-        <motion.p
-          initial={{ backgroundPosition: "0% 50%" }}
-          whileInView={{ backgroundPosition: "100% 50%" }}
-          transition={{ duration: 3, ease }}
-          viewport={{ once: true }}
-          className="select-none bg-gradient-to-r from-white/10 via-white/25 to-white/5 bg-[length:200%_100%] bg-clip-text text-center text-[clamp(3rem,13vw,10rem)] font-semibold leading-none tracking-[-0.05em] text-transparent"
-        >
-          Say hello.
-        </motion.p>
-      </Reveal>
     </section>
   );
 }

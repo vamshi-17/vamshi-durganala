@@ -1,39 +1,48 @@
-import { ArrowUp, Github, Linkedin, Mail } from "lucide-react";
+"use client";
+
+import { motion } from "framer-motion";
+import { ArrowUp } from "lucide-react";
 import { profile } from "@/data/profile";
+import { scrollToId } from "@/components/smooth-scroll";
+import { ease } from "@/components/ui/reveal";
 
 export function Footer() {
-  const links = [
-    { href: profile.socials.github, label: "GitHub", icon: Github },
-    { href: profile.socials.linkedin, label: "LinkedIn", icon: Linkedin },
-    { href: `mailto:${profile.email}`, label: "Email", icon: Mail },
-  ];
-
   return (
-    <footer className="relative border-t border-line">
-      <div className="mx-auto flex max-w-6xl flex-col items-center justify-between gap-6 px-6 py-10 md:flex-row">
-        <p className="text-sm text-muted">
-          © {new Date().getFullYear()} {profile.name}. Built with Next.js & Framer Motion.
-        </p>
-        <div className="flex items-center gap-2">
-          {links.map(({ href, label, icon: Icon }) => (
-            <a
-              key={label}
-              href={href}
-              target={href.startsWith("http") ? "_blank" : undefined}
-              rel="noopener noreferrer"
-              aria-label={label}
-              className="grid size-10 place-items-center rounded-full border border-line text-muted transition hover:border-line-strong hover:text-fg"
-            >
-              <Icon className="size-4" />
-            </a>
-          ))}
-          <a
-            href="#home"
-            aria-label="Back to top"
-            className="ml-2 grid size-10 place-items-center rounded-full bg-white/5 text-fg transition hover:-translate-y-0.5 hover:bg-white/10"
+    <footer className="relative overflow-hidden">
+      <div className="mx-auto max-w-6xl px-5 md:px-6">
+        <div className="overflow-hidden">
+          <motion.p
+            initial={{ y: "100%" }}
+            whileInView={{ y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 1.1, ease }}
+            className="font-display text-[clamp(4.5rem,22vw,17rem)] leading-[0.8] text-surface-2 select-none"
+            aria-hidden
           >
-            <ArrowUp className="size-4" />
-          </a>
+            200 <span className="text-lime/90">OK</span>
+          </motion.p>
+        </div>
+      </div>
+
+      {/* IDE-style status bar */}
+      <div className="border-t border-line bg-surface font-mono text-[11px] text-muted">
+        <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-x-6 gap-y-2 px-5 py-3 md:px-6">
+          <span className="flex items-center gap-2">
+            <span className="size-1.5 rounded-full bg-lime" />
+            all systems operational
+          </span>
+          <span className="hidden md:inline">next.js · framer motion · lenis · tailwind</span>
+          <span className="flex items-center gap-4">
+            <span>© {new Date().getFullYear()} {profile.name}</span>
+            <button
+              type="button"
+              onClick={() => scrollToId("home")}
+              className="flex items-center gap-1 text-fg transition hover:text-lime"
+              aria-label="Back to top"
+            >
+              <ArrowUp className="size-3.5" /> top
+            </button>
+          </span>
         </div>
       </div>
     </footer>
