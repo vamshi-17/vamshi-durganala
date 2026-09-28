@@ -1,7 +1,7 @@
 import Script from "next/script";
 
 // Google Analytics 4 measurement ID (public by design; it identifies the property, not a secret).
-export const GA_ID = "G-CSC26DCGT1";
+const GA_ID = "G-CSC26DCGT1";
 
 declare global {
   interface Window {
