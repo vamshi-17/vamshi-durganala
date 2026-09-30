@@ -1,16 +1,24 @@
-// Serves the static export (./out) under the GitHub Pages base path, behaving like Pages does:
+// Serves the static export (./out, or $NEXT_DIST_DIR) under the GitHub Pages base path, behaving like Pages does:
 //   /vamshi-portfolio/about/  → out/about/index.html
 //   /vamshi-portfolio/about   → 301 to /vamshi-portfolio/about/
 //   anything missing          → out/404.html with status 404
 // Used by the Playwright tests (and handy for previewing a production build: npm run build && npm run serve).
 import { createServer } from "node:http";
+import { existsSync } from "node:fs";
 import { readFile, stat } from "node:fs/promises";
 import { extname, join, normalize, sep } from "node:path";
 import { fileURLToPath } from "node:url";
 
 const BASE = process.env.NEXT_PUBLIC_BASE_PATH ?? "/vamshi-portfolio";
 const PORT = Number(process.env.PORT ?? 4173);
-const ROOT = fileURLToPath(new URL("../out/", import.meta.url));
+// With `output: "export"`, a custom distDir (NEXT_DIST_DIR, used by the tests) is also where the export is written.
+const EXPORT_DIR = process.env.NEXT_DIST_DIR || "out";
+const ROOT = fileURLToPath(new URL(`../${EXPORT_DIR}/`, import.meta.url));
+
+if (!existsSync(join(ROOT, "index.html"))) {
+  console.error(`serve-out: no static export found in ${EXPORT_DIR}/ — run the build first.`);
+  process.exit(1);
+}
 
 const TYPES = {
   ".html": "text/html; charset=utf-8",
@@ -56,4 +64,4 @@ createServer(async (req, res) => {
   } catch {
     await notFound(res);
   }
-}).listen(PORT, () => console.log(`Serving out/ at http://localhost:${PORT}${BASE}/`));
+}).listen(PORT, () => console.log(`Serving ${EXPORT_DIR}/ at http://localhost:${PORT}${BASE}/`));

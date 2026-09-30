@@ -30,7 +30,9 @@ First time on a machine: `npx playwright install chromium`.
 
 **Tests** (Playwright, `playwright.config.ts`): `tests/unit/` runs pure functions in Node; `tests/e2e/` runs against a
 real production build (base path + dummy `NEXT_PUBLIC_WEB3FORMS_KEY`) served by `scripts/serve-out.mjs`, which mimics
-Pages (trailing-slash redirects, 404.html). The auto fixture in `tests/e2e/fixtures.ts` blocks analytics, mocks
+Pages (trailing-slash redirects, 404.html). The test build uses `NEXT_DIST_DIR=.next-test` so it can't collide with a
+running `next dev`; note that with `output: "export"` a custom distDir is also where the export lands (not `out/`),
+which is why serve-out reads `NEXT_DIST_DIR`. The auto fixture in `tests/e2e/fixtures.ts` blocks analytics, mocks
 Cloudflare DNS (`*.no-such-domain.test` = dead domain), and **fails any test whose page throws or logs an error**.
 Tag tests `@mobile` to also run on the Pixel 7 project, `@mobile-only` to run only there. Use relative `page.goto("about/")`
 — a leading `/` drops the base path. Prefer `expect.poll`/web-first assertions over sleeps (scrolling is animated).
