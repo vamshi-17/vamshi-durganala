@@ -64,10 +64,15 @@ defined once in `hops` in `src/data/profile.ts` (`home→client`, `about→gatew
 palette and each `SectionHeading` ("02 · services — GET /experience 200") all derive from `hops`; adding or renaming a
 section means updating `hops` and the section's `id`, not those components.
 
+**Adding or changing a side project: use the `add-project` skill** (`.claude/skills/add-project/`). A project needs
+only a data entry — its visual falls back from a bespoke mock → `image` screenshot → auto-generated stack diagram
+(`ProjectVisual` in `sections/projects.tsx`), numbering is derived from array order, and
+`tests/unit/profile-data.spec.ts` enforces copy-length limits (desktop cards have a fixed height), unique ids,
+screenshot files and valid stack-map trace steps.
+
 **All content lives in `src/data/profile.ts`** — profile, `services` (jobs, with typed `changelog` entries rendered as
-a git log), `projects` (side projects; each `id` maps to a mock UI in `components/project-mocks.tsx` via the `mocks`
-table in `sections/projects.tsx`), `layers` + `traces` (the stack map; every step in a trace's `path` must exactly match
-an item in some layer or it silently won't highlight), `endpoints` (hero API console JSON), `logLines` (ticker) and
+a git log), `projects` (side projects; array order = display order), `layers` + `traces` (the stack map; every step in a trace's `path` must exactly match
+an item in some layer — unit-tested), `endpoints` (hero API console JSON), `logLines` (ticker) and
 `headers` (about card). Prefer editing data over components.
 
 **Static export + base path.** `next.config.ts` sets `output: "export"` and `basePath` from `NEXT_PUBLIC_BASE_PATH`

@@ -1,3 +1,4 @@
+import { projects } from "../../src/data/profile";
 import { expect, expectInView, test } from "./fixtures";
 
 test("hero API console calls the selected endpoint", async ({ page }) => {
@@ -46,11 +47,14 @@ test("stack map highlights a traced request path", async ({ page }) => {
   await expect(stack.locator("span", { hasText: /^Keycloak/ }).first()).not.toHaveClass(/text-lime/);
 });
 
-test("all side projects are listed with their stacks", async ({ page }) => {
+test("every side project in the data renders a card with a visual", async ({ page }) => {
   await page.goto("projects/");
   const cards = page.locator("#projects article");
-  await expect(cards).toHaveCount(3);
-  for (const name of ["Job Discovery Platform", "Expense App", "Hemo"]) {
-    await expect(page.locator("#projects").getByRole("heading", { name })).toBeAttached();
+  await expect(cards).toHaveCount(projects.length);
+  for (const [i, project] of projects.entries()) {
+    const card = cards.nth(i);
+    await expect(card.getByRole("heading", { name: project.name })).toBeAttached();
+    await expect(card).toContainText(`${String(i + 1).padStart(2, "0")} / ${String(projects.length).padStart(2, "0")}`);
+    for (const tech of project.stack) await expect(card).toContainText(tech);
   }
 });

@@ -3,7 +3,8 @@
 import { useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion, useInView } from "framer-motion";
 import { Bell, CalendarClock, Droplet, FileText, MessageSquare, Pill, Stethoscope, UserPlus } from "lucide-react";
-import { cn } from "@/lib/utils";
+import Image from "next/image";
+import { asset, cn } from "@/lib/utils";
 
 /** Runs `fn` every `ms` only while `ref` is on screen. */
 function useTicker(ref: React.RefObject<Element | null>, ms: number, fn: () => void) {
@@ -269,6 +270,69 @@ export function HemoMock() {
             </motion.ul>
           </AnimatePresence>
         </div>
+      </div>
+    </div>
+  );
+}
+
+/* ───────────────────────── Fallbacks for projects without a bespoke mock ───────────────────────── */
+
+/** A real screenshot (public/projects/…) in a browser frame. */
+export function ScreenshotFrame({ src, alt, title }: { src: string; alt: string; title: string }) {
+  return (
+    <figure className="w-full max-w-lg overflow-hidden rounded-xl border border-line-strong bg-bg shadow-2xl shadow-black/50">
+      <div className="flex items-center gap-2 border-b border-line px-3 py-2.5">
+        <span className="size-2.5 rounded-full bg-[#ff5f57]" />
+        <span className="size-2.5 rounded-full bg-[#febc2e]" />
+        <span className="size-2.5 rounded-full bg-[#28c840]" />
+        <span className="ml-2 min-w-0 flex-1 truncate rounded bg-surface-2 px-3 py-1 font-mono text-[10px] text-subtle">{title}</span>
+      </div>
+      <Image src={asset(src)} alt={alt} width={1280} height={800} sizes="(min-width: 1024px) 32rem, 90vw" className="h-auto w-full" />
+    </figure>
+  );
+}
+
+/** Auto-generated "architecture" for a project: its stack as a live pipeline with a packet flowing through it. */
+export function StackDiagram({ id, stack }: { id: string; stack: string[] }) {
+  const ref = useRef<HTMLDivElement>(null);
+  const inView = useInView(ref, { margin: "-10%" });
+  const nodes = stack.slice(0, 7);
+
+  return (
+    <div ref={ref} className="w-full max-w-md overflow-hidden rounded-xl border border-line-strong bg-bg shadow-2xl shadow-black/50">
+      <div className="flex items-center justify-between gap-3 border-b border-line px-4 py-3">
+        <span className="min-w-0 truncate font-mono text-xs text-muted">{id}/architecture</span>
+        <span className="flex shrink-0 items-center gap-1.5 font-mono text-[10px] text-lime">
+          <span className="size-1.5 animate-pulse rounded-full bg-lime" /> healthy
+        </span>
+      </div>
+      <div className="relative px-6 py-5">
+        {/* node squares are 15px wide starting at 24px, so their centre line is x = 31.5px */}
+        <div className="absolute top-9 bottom-9 left-[31px] w-px bg-line-strong" />
+        {inView && (
+          <motion.span
+            aria-hidden
+            className="absolute left-[27px] z-20 size-[9px] rounded-full bg-lime shadow-[0_0_12px_3px_rgb(200_243_29/0.55)]"
+            initial={{ top: "2rem" }}
+            animate={{ top: ["2rem", "calc(100% - 2.6rem)"] }}
+            transition={{ duration: 0.45 * nodes.length, repeat: Infinity, repeatDelay: 0.5, ease: "easeInOut" }}
+          />
+        )}
+        <ul className="space-y-3">
+          {nodes.map((tech, i) => (
+            <motion.li
+              key={tech}
+              initial={{ opacity: 0, x: -8 }}
+              animate={inView ? { opacity: 1, x: 0 } : {}}
+              transition={{ delay: i * 0.08, duration: 0.35 }}
+              className="relative flex items-center gap-4"
+            >
+              <span className="z-10 size-[15px] shrink-0 rounded-[4px] border border-lime/70 bg-bg" />
+              <span className="min-w-0 flex-1 truncate rounded-md border border-line bg-surface px-3 py-2 font-mono text-xs">{tech}</span>
+              <span className="font-mono text-[10px] text-subtle">L{i}</span>
+            </motion.li>
+          ))}
+        </ul>
       </div>
     </div>
   );
