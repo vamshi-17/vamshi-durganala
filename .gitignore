@@ -46,3 +46,6 @@ next-env.d.ts
 /blob-report/
 /playwright/.cache/
 /.next-test/
+
+# claude code: personal settings stay local (shared config and skills in .claude/ are committed)
+/.claude/settings.local.json

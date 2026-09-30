@@ -5,11 +5,20 @@ import { motion, useScroll, useTransform, type MotionValue } from "framer-motion
 import { ArrowUpRight, Lock } from "lucide-react";
 import { projects, type Project } from "@/data/profile";
 import { Mark, SectionHeading } from "@/components/ui/section-heading";
-import { ExpenseMock, HemoMock, JobFeedMock } from "@/components/project-mocks";
+import { ExpenseMock, HemoMock, JobFeedMock, ScreenshotFrame, StackDiagram } from "@/components/project-mocks";
 import { Reveal } from "@/components/ui/reveal";
 import { cn } from "@/lib/utils";
 
-const mocks = { jobs: JobFeedMock, expense: ExpenseMock, hemo: HemoMock };
+/** Bespoke live mock UIs, keyed by project id. Optional — see ProjectVisual for the fallbacks. */
+const mocks: Partial<Record<string, () => React.JSX.Element>> = { jobs: JobFeedMock, expense: ExpenseMock, hemo: HemoMock };
+
+/** Bespoke mock → real screenshot → auto-generated stack diagram, so every project renders with just a data entry. */
+function ProjectVisual({ project }: { project: Project }) {
+  const Mock = mocks[project.id];
+  if (Mock) return <Mock />;
+  if (project.image) return <ScreenshotFrame {...project.image} title={project.name} />;
+  return <StackDiagram id={project.id} stack={project.stack} />;
+}
 
 function useIsDesktop() {
   const [desktop, setDesktop] = useState(false);
@@ -37,21 +46,21 @@ function ProjectCard({
   const n = projects.length;
   // Earlier cards shrink slightly as later ones slide over them.
   const scale = useTransform(progress, [i / n, 1], [1, 1 - (n - 1 - i) * 0.05]);
-  const Mock = mocks[project.id];
 
   return (
     // Each pinned card gets an extra half-screen of scroll so it can be read before the next slides over it.
     <div className={cn(stacked ? (i < n - 1 ? "h-[150vh]" : "h-screen") : "mb-6")}>
       <div className={cn(stacked && "sticky top-0 flex h-screen items-center")}>
         <motion.article
+          data-project-id={project.id}
           style={stacked ? { scale, top: i * 26 } : undefined}
           className="relative grid w-full origin-top overflow-hidden rounded-2xl border border-line-strong bg-surface lg:h-[min(84vh,700px)] lg:grid-cols-[1fr_1.05fr]"
         >
           <div className="flex min-w-0 flex-col p-7 md:p-9">
             <div className="flex items-center justify-between font-mono text-xs">
               <span className="text-lime">
-                {project.index}
-                <span className="text-subtle"> / 0{n}</span>
+                {String(i + 1).padStart(2, "0")}
+                <span className="text-subtle"> / {String(n).padStart(2, "0")}</span>
               </span>
               <span className="text-subtle">{project.meta}</span>
             </div>
@@ -104,7 +113,7 @@ function ProjectCard({
             <div className="absolute inset-0 bg-dots" />
             <div className="absolute -right-24 -bottom-24 size-72 rounded-full bg-[radial-gradient(closest-side,rgb(200_243_29/0.12),transparent)]" />
             <div className="relative flex w-full justify-center">
-              <Mock />
+              <ProjectVisual project={project} />
             </div>
           </div>
         </motion.article>

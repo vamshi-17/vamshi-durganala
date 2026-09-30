@@ -148,9 +148,15 @@ export const services: Service[] = [
   },
 ];
 
+/**
+ * A side project card. Array order is display order (numbering is derived from it).
+ * Visual, in order of preference: a bespoke live mock registered under `id` in sections/projects.tsx,
+ * else `image` (a real screenshot in /public/projects/), else an auto-generated diagram of `stack`.
+ * To add one, use the `add-project` skill (.claude/skills/add-project).
+ */
 export type Project = {
-  id: "jobs" | "expense" | "hemo";
-  index: string;
+  /** kebab-case, unique; also the key for an optional bespoke mock. */
+  id: string;
   name: string;
   tagline: string;
   problem: string;
@@ -158,12 +164,13 @@ export type Project = {
   stack: string[];
   meta: string;
   links: { label: string; href: string }[];
+  /** Real screenshot, e.g. { src: "/projects/my-app.png", alt: "…" } → public/projects/my-app.png (~1280×800). */
+  image?: { src: string; alt: string };
 };
 
 export const projects: Project[] = [
   {
     id: "jobs",
-    index: "01",
     name: "Job Discovery Platform",
     tagline: "See new software jobs minutes after they're posted, not hours.",
     problem:
@@ -180,7 +187,6 @@ export const projects: Project[] = [
   },
   {
     id: "expense",
-    index: "02",
     name: "Expense App",
     tagline: "Budgets, salary and spending in one clear dashboard.",
     problem:
@@ -200,7 +206,6 @@ export const projects: Project[] = [
   },
   {
     id: "hemo",
-    index: "03",
     name: "Hemo",
     tagline: "An Android app connecting patients, doctors and pharmacies.",
     problem:
