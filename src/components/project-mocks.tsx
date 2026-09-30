@@ -300,9 +300,9 @@ export function StackDiagram({ id, stack }: { id: string; stack: string[] }) {
 
   return (
     <div ref={ref} className="w-full max-w-md overflow-hidden rounded-xl border border-line-strong bg-bg shadow-2xl shadow-black/50">
-      <div className="flex items-center justify-between border-b border-line px-4 py-3">
-        <span className="font-mono text-xs text-muted">{id}/architecture</span>
-        <span className="flex items-center gap-1.5 font-mono text-[10px] text-lime">
+      <div className="flex items-center justify-between gap-3 border-b border-line px-4 py-3">
+        <span className="min-w-0 truncate font-mono text-xs text-muted">{id}/architecture</span>
+        <span className="flex shrink-0 items-center gap-1.5 font-mono text-[10px] text-lime">
           <span className="size-1.5 animate-pulse rounded-full bg-lime" /> healthy
         </span>
       </div>

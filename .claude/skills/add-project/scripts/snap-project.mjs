@@ -45,6 +45,8 @@ try {
     const page = await browser.newPage({ viewport, deviceScaleFactor: 1 });
     await page.route(/google-analytics|googletagmanager/, (r) => r.abort());
     await page.goto(url);
+    // Hide the site's fixed chrome (nav bar, section rail) so it isn't captured on top of the card.
+    await page.addStyleTag({ content: "header, aside[aria-label='Page sections'] { visibility: hidden !important; }" });
     const cards = page.locator("#projects article");
     const index = await cards.evaluateAll((els, id) => els.findIndex((el) => el.dataset.projectId === id), id);
     if (index < 0) {
