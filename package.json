@@ -5,9 +5,13 @@
   "scripts": {
     "dev": "next dev --turbopack -p 3001",
     "build": "next build",
-    "start": "next start",
     "lint": "next lint",
-    "og": "node scripts/og/render.mjs"
+    "og": "node scripts/og/render.mjs",
+    "test": "playwright test",
+    "test:unit": "playwright test --project=unit",
+    "test:e2e": "playwright test --project=desktop --project=mobile",
+    "test:ui": "playwright test --ui",
+    "serve": "node scripts/serve-out.mjs"
   },
   "dependencies": {
     "clsx": "^2.1.1",
@@ -21,13 +25,13 @@
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",
+    "@playwright/test": "^1.63.0",
     "@tailwindcss/postcss": "^4",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "eslint": "^9",
     "eslint-config-next": "15.3.5",
-    "puppeteer-core": "^23.11.1",
     "tailwindcss": "^4",
     "typescript": "^5"
   }
