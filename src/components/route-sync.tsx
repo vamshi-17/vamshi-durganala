@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useState } from "react";
 import { scrollToId } from "@/components/smooth-scroll";
 import { useActiveSection } from "@/lib/use-active-section";
 import { isSection, sectionFromPath, sectionPath, sectionTitle, type SectionId } from "@/lib/sections";
@@ -13,7 +13,9 @@ import { isSection, sectionFromPath, sectionPath, sectionTitle, type SectionId }
  */
 export function RouteSync({ initial = "home" }: { initial?: SectionId }) {
   const active = useActiveSection();
-  const ready = useRef(false);
+  // Scroll-spy may rewrite the URL only once the initial jump has landed. State (not a ref) so that the moment it
+  // flips, the effect below syncs whatever section the reader already scrolled to.
+  const [ready, setReady] = useState(false);
 
   useEffect(() => {
     window.history.scrollRestoration = "manual";
@@ -37,7 +39,7 @@ export function RouteSync({ initial = "home" }: { initial?: SectionId }) {
     // Don't let scroll-spy rewrite the URL while the initial jump is still landing.
     const settle = setTimeout(() => {
       ro.disconnect();
-      ready.current = true;
+      setReady(true);
       // Next re-applies the route's metadata title after hydration; restate ours for the section actually shown.
       document.title = sectionTitle(sectionFromPath(window.location.pathname));
     }, 1200);
@@ -54,7 +56,7 @@ export function RouteSync({ initial = "home" }: { initial?: SectionId }) {
   }, [initial]);
 
   useEffect(() => {
-    if (!ready.current) return;
+    if (!ready) return;
     // Debounced so sections flashed past during a smooth scroll don't each rewrite the URL.
     const t = setTimeout(() => {
       const id = active as SectionId;
@@ -63,7 +65,7 @@ export function RouteSync({ initial = "home" }: { initial?: SectionId }) {
       document.title = sectionTitle(id);
     }, 400);
     return () => clearTimeout(t);
-  }, [active]);
+  }, [active, ready]);
 
   return null;
 }

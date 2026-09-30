@@ -11,7 +11,23 @@ npm install
 npm run dev      # http://localhost:3001
 npm run lint
 npm run build    # static export to ./out
+npm run serve    # preview ./out at http://localhost:4173/vamshi-portfolio/ (like GitHub Pages)
 ```
+
+## Tests
+
+[Playwright](https://playwright.dev) runs unit tests and end-to-end tests (desktop 1440px + Pixel 7) against a
+production build. Analytics, the contact-form API and DNS are mocked, so tests never send email or hit the network.
+
+```bash
+npx playwright install chromium   # once per machine
+npm test                          # everything (builds the site first)
+npm run test:unit                 # fast unit tests only
+npm run test:ui                   # interactive runner
+```
+
+CI runs the full suite on every pull request; the site only deploys when it passes. On failure, download the
+`playwright-report` artifact from the workflow run and open `index.html`.
 
 ## Editing content
 
@@ -44,8 +60,8 @@ src/
 
 ## Deployment
 
-`.github/workflows/deploy.yml` runs on every pull request (lint + build only) and on pushes to `main`
-(lint + build + deploy to GitHub Pages). The base path is derived from the repo name automatically.
+`.github/workflows/deploy.yml` runs on every pull request (lint, type-check, build, tests) and on pushes to `main`
+(the same, then deploy to GitHub Pages). The base path is derived from the repo name automatically.
 
 One-time setup in the repo:
 

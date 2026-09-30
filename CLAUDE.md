@@ -14,11 +14,26 @@ npm run dev     # dev server on http://localhost:3001 (turbopack)
 npm run lint    # next lint (ESLint, next/core-web-vitals + typescript)
 npx tsc --noEmit
 npm run build   # static export to ./out
-npm run og      # re-render public/og.png from scripts/og/og.html (needs local Chrome/Edge; CHROME_PATH overrides)
+npm run og      # re-render public/og.png from scripts/og/og.html (Playwright Chromium, falls back to Chrome/Edge)
+npm run serve   # serve ./out under /vamshi-portfolio/ like GitHub Pages (after a base-path build)
+
+npm test                                   # everything: unit + e2e (desktop + mobile); builds the site first
+npm run test:unit                          # unit tests only, no build (~2s)
+npm run test:e2e                           # e2e only
+npx playwright test tests/e2e/contact.spec.ts            # one file
+npx playwright test -g "legacy #fragment"                # one test by name
+npx playwright test --project=mobile                     # one viewport
+npm run test:ui                            # interactive runner
 ```
 
-There is no test suite yet; verification is lint + type-check + build, plus checking the page at desktop (1440px) and
-mobile (390px) widths.
+First time on a machine: `npx playwright install chromium`.
+
+**Tests** (Playwright, `playwright.config.ts`): `tests/unit/` runs pure functions in Node; `tests/e2e/` runs against a
+real production build (base path + dummy `NEXT_PUBLIC_WEB3FORMS_KEY`) served by `scripts/serve-out.mjs`, which mimics
+Pages (trailing-slash redirects, 404.html). The auto fixture in `tests/e2e/fixtures.ts` blocks analytics, mocks
+Cloudflare DNS (`*.no-such-domain.test` = dead domain), and **fails any test whose page throws or logs an error**.
+Tag tests `@mobile` to also run on the Pixel 7 project, `@mobile-only` to run only there. Use relative `page.goto("about/")`
+— a leading `/` drops the base path. Prefer `expect.poll`/web-first assertions over sleeps (scrolling is animated).
 
 To build exactly as production does (assets under the Pages sub-path):
 
@@ -32,8 +47,9 @@ On Windows Git Bash prefix with `MSYS_NO_PATHCONV=1`, otherwise `/vamshi-portfol
 
 - `main` is protected and always equals what is live. Never commit to it directly: branch as `feat/*`, `fix/*`,
   `chore/*`, `docs/*`, `ci/*`, use Conventional Commit messages, push, and open a PR with `gh pr create`.
-- `.github/workflows/deploy.yml` runs lint + build on every PR and deploys to Pages only on push to `main`
-  (i.e. merging a PR deploys). A PR is not done until its `build` check passes.
+- `.github/workflows/deploy.yml` runs `build` (lint, type-check, build) and `e2e` (`npm test`, uploads the HTML report
+  on failure) on every PR, and deploys to Pages only on push to `main` after both pass (i.e. merging a PR deploys).
+  A PR is not done until both checks pass; add or update tests alongside behaviour changes.
 - `gh` may not be on PATH in Git Bash on this machine; use `"/c/Program Files/GitHub CLI/gh.exe"`.
 - Commit author email for this repo is `durganalavamshikrishna@gmail.com` (set in local git config; the global one is
   a work address).
