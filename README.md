@@ -2,7 +2,7 @@
 
 Personal portfolio built with **Next.js 15**, **Tailwind CSS v4**, **Framer Motion** and **Lenis**, statically exported and deployed to **GitHub Pages**.
 
-Live: https://vamshi-17.github.io/vamshi-portfolio/
+Live: https://vamshi-17.github.io/vamshi-durganala/
 
 ## Local development
 
@@ -11,7 +11,7 @@ npm install
 npm run dev      # http://localhost:3001
 npm run lint
 npm run build    # static export to ./out
-npm run serve    # preview ./out at http://localhost:4173/vamshi-portfolio/ (like GitHub Pages)
+npm run serve    # preview ./out at http://localhost:4173/vamshi-durganala/ (like GitHub Pages)
 ```
 
 ## Tests

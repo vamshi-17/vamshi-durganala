@@ -27,10 +27,10 @@ const out = resolve(outArg ?? join("test-results", "project-snaps"));
 mkdirSync(out, { recursive: true });
 
 const server = spawn(process.execPath, ["scripts/serve-out.mjs"], {
-  env: { ...process.env, NEXT_DIST_DIR: DIST, PORT: String(PORT), NEXT_PUBLIC_BASE_PATH: "/vamshi-portfolio" },
+  env: { ...process.env, NEXT_DIST_DIR: DIST, PORT: String(PORT), NEXT_PUBLIC_BASE_PATH: "/vamshi-durganala" },
   stdio: "ignore",
 });
-const url = `http://localhost:${PORT}/vamshi-portfolio/projects/`;
+const url = `http://localhost:${PORT}/vamshi-durganala/projects/`;
 for (let i = 0; i < 50; i++) {
   try {
     if ((await fetch(url)).ok) break;

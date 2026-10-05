@@ -1,7 +1,7 @@
 import { defineConfig, devices } from "@playwright/test";
 
 const PORT = 4173;
-const BASE_PATH = "/vamshi-portfolio";
+const BASE_PATH = "/vamshi-durganala";
 const CI = !!process.env.CI;
 // Unit tests don't need a browser or a built site.
 const unitOnly = process.argv.some((a) => a === "--project=unit" || a === "unit");

@@ -19,11 +19,11 @@ test.describe("smoke", { tag: "@mobile" }, () => {
   test("assets and metadata use the Pages base path", async ({ page, request }) => {
     await page.goto("./");
     const resume = page.getByRole("link", { name: /Résumé/ }).first();
-    await expect(resume).toHaveAttribute("href", /^\/vamshi-portfolio\/.+\.pdf$/);
-    expect((await request.get((await resume.getAttribute("href"))!.replace("/vamshi-portfolio/", ""))).status()).toBe(200);
+    await expect(resume).toHaveAttribute("href", /^\/vamshi-durganala\/.+\.pdf$/);
+    expect((await request.get((await resume.getAttribute("href"))!.replace("/vamshi-durganala/", ""))).status()).toBe(200);
 
-    await expect(page.locator('meta[property="og:image"]')).toHaveAttribute("content", "https://vamshi-17.github.io/vamshi-portfolio/og.png");
-    await expect(page.locator('link[rel="canonical"]')).toHaveAttribute("href", "https://vamshi-17.github.io/vamshi-portfolio/");
+    await expect(page.locator('meta[property="og:image"]')).toHaveAttribute("content", "https://vamshi-17.github.io/vamshi-durganala/og.png");
+    await expect(page.locator('link[rel="canonical"]')).toHaveAttribute("href", "https://vamshi-17.github.io/vamshi-durganala/");
     expect((await request.get("og.png")).status()).toBe(200);
   });
 
