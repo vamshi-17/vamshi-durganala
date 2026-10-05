@@ -97,8 +97,13 @@ layout grows after hydration), replaces the URL/title as the reader scrolls, han
   `data-lenis-prevent`.
 - `lib/use-active-section.ts` (IntersectionObserver) drives the active state in both `Nav` and `SystemRail`.
 - `CommandPalette` opens on Ctrl/⌘+K or via the `openPalette()` event helper.
-- `components/analytics.tsx` loads GA4 (`G-CSC26DCGT1`) in production builds only; use its `track()` for custom
-  events. The ID is public by design.
+- `components/analytics.tsx` loads GA4 (`G-CSC26DCGT1`) and GoatCounter (`GOATCOUNTER_CODE`) in production builds
+  only; both IDs are public by design. GoatCounter is the primary visitor count: it runs with `no_onload` and counts
+  **one page view per visit** — the landing path captured at module load, before RouteSync rewrites the URL — with
+  the source from tagged links (`?ref=linkedin`, `?ref=<company>`, or `utm_source`; see `lib/visit-source.ts`).
+  `track()` sends custom events to both; résumé downloads and outbound clicks are GoatCounter events via a document
+  click listener (GA4 records those itself). Tests replace `gc.zgo.at/count.js` with a recorder
+  (`tests/e2e/analytics.spec.ts`); the fixture blocks both services everywhere else.
 - `NEXT_PUBLIC_WEB3FORMS_KEY` is injected at build time from the `WEB3FORMS_KEY` repo secret; without it the contact
   form falls back to `mailto:`.
 - Contact form (`components/contact-form.tsx`) uses `noValidate` + custom rules in `lib/validate-contact.ts` (pure,

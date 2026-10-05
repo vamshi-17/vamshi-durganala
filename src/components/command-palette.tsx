@@ -6,6 +6,7 @@ import { ArrowDownToLine, CornerDownLeft, Copy, Github, Hash, Linkedin, Mail, Se
 import { hops, profile } from "@/data/profile";
 import { asset, cn, copyText } from "@/lib/utils";
 import { navigateTo } from "@/components/smooth-scroll";
+import { countEvent } from "@/components/analytics";
 
 const OPEN_EVENT = "palette:open";
 export const openPalette = () => window.dispatchEvent(new Event(OPEN_EVENT));
@@ -24,9 +25,9 @@ function useActions(): Action[] {
       })),
       { id: "copy", label: "Copy email address", hint: profile.email, icon: Copy, run: () => void copyText(profile.email) },
       { id: "mail", label: "Send an email", hint: "mailto", icon: Mail, run: () => (window.location.href = `mailto:${profile.email}`) },
-      { id: "resume", label: "Download résumé", hint: "PDF", icon: ArrowDownToLine, run: () => window.open(asset(profile.resume), "_blank") },
-      { id: "github", label: "Open GitHub", hint: "@vamshi-17", icon: Github, run: () => window.open(profile.socials.github, "_blank") },
-      { id: "linkedin", label: "Open LinkedIn", hint: "in/", icon: Linkedin, run: () => window.open(profile.socials.linkedin, "_blank") },
+      { id: "resume", label: "Download résumé", hint: "PDF", icon: ArrowDownToLine, run: () => (countEvent("resume-download"), window.open(asset(profile.resume), "_blank")) },
+      { id: "github", label: "Open GitHub", hint: "@vamshi-17", icon: Github, run: () => (countEvent("outbound/github.com"), window.open(profile.socials.github, "_blank")) },
+      { id: "linkedin", label: "Open LinkedIn", hint: "in/", icon: Linkedin, run: () => (countEvent("outbound/linkedin.com"), window.open(profile.socials.linkedin, "_blank")) },
     ],
     [],
   );
