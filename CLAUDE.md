@@ -96,7 +96,9 @@ layout grows after hydration), replaces the URL/title as the reader scrolls, han
   (or `navigateTo()` when the URL should change). Scrollable inner elements (palette list, textareas) need
   `data-lenis-prevent`.
 - `lib/use-active-section.ts` (IntersectionObserver) drives the active state in both `Nav` and `SystemRail`.
-- `CommandPalette` opens on Ctrl/⌘+K or via the `openPalette()` event helper.
+- `CommandPalette` opens on Ctrl/⌘+K or via the `openPalette()` event helper. Shortcut *labels* come from
+  `useKeyboardKind()` (`lib/keyboard.ts`): ⌘ on Apple, Ctrl elsewhere, none on touch-only devices — detected after
+  hydration, so never hard-code a modifier key in markup.
 - `components/analytics.tsx` loads GA4 (`G-CSC26DCGT1`) and GoatCounter (`GOATCOUNTER_CODE`) in production builds
   only; both IDs are public by design. GoatCounter is the primary visitor count: it runs with `no_onload` and counts
   **one page view per visit** — the landing path captured at module load, before RouteSync rewrites the URL — with

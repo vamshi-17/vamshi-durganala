@@ -4,7 +4,8 @@ import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { ArrowDown, ArrowDownToLine, Github, Linkedin } from "lucide-react";
 import { profile } from "@/data/profile";
-import { asset } from "@/lib/utils";
+import { asset, cn } from "@/lib/utils";
+import { modifierKey, useKeyboardKind } from "@/lib/keyboard";
 import { ApiConsole } from "@/components/api-console";
 import { LogTicker } from "@/components/ui/marquee";
 import { Magnetic } from "@/components/ui/magnetic";
@@ -41,6 +42,7 @@ const facts = [
 ];
 
 export function Hero() {
+  const keyboard = useKeyboardKind();
   return (
     <section id="home" className="relative pt-28 md:pt-32">
       <div className="mx-auto grid max-w-6xl items-center gap-14 px-5 md:px-6 lg:grid-cols-[1.08fr_1fr] lg:gap-14">
@@ -137,9 +139,18 @@ export function Hero() {
                 </a>
               ))}
             </div>
-            <p className="mt-6 hidden font-mono text-xs text-subtle sm:block">
-              tip: press <kbd className="rounded border border-line px-1.5 py-0.5 text-muted">Ctrl</kbd> +{" "}
-              <kbd className="rounded border border-line px-1.5 py-0.5 text-muted">K</kbd> to jump anywhere
+            {/* Space is reserved until the keyboard kind is known (no layout jump); touch-only devices never show it. */}
+            <p
+              data-testid="shortcut-tip"
+              aria-hidden={!keyboard || keyboard === "touch"}
+              className={cn(
+                "mt-6 hidden font-mono text-xs text-subtle sm:block",
+                (!keyboard || keyboard === "touch") && "invisible",
+              )}
+            >
+              tip: press{" "}
+              <kbd className="rounded border border-line px-1.5 py-0.5 text-muted">{keyboard ? modifierKey(keyboard) : "Ctrl"}</kbd>{" "}
+              + <kbd className="rounded border border-line px-1.5 py-0.5 text-muted">K</kbd> to jump anywhere
             </p>
           </motion.div>
         </div>

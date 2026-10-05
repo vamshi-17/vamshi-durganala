@@ -2,10 +2,11 @@
 
 import { useState } from "react";
 import { AnimatePresence, motion, useMotionValueEvent, useScroll } from "framer-motion";
-import { ArrowDownToLine, Command, Menu, X } from "lucide-react";
+import { ArrowDownToLine, Menu, Search, X } from "lucide-react";
 import { hops, profile } from "@/data/profile";
 import { asset, cn } from "@/lib/utils";
 import { useActiveSection } from "@/lib/use-active-section";
+import { modifierKey, useKeyboardKind } from "@/lib/keyboard";
 import { ease } from "@/components/ui/reveal";
 import { openPalette } from "@/components/command-palette";
 import { SectionLink } from "@/components/ui/section-link";
@@ -14,6 +15,7 @@ const links = hops.slice(1);
 
 export function Nav() {
   const active = useActiveSection();
+  const keyboard = useKeyboardKind();
   const [open, setOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const { scrollY } = useScroll();
@@ -67,8 +69,11 @@ export function Nav() {
               onClick={openPalette}
               className="hidden items-center gap-1.5 rounded-md border border-line-strong px-2.5 py-1.5 font-mono text-xs text-muted transition hover:border-fg/40 hover:text-fg sm:flex"
               aria-label="Open command palette"
+              aria-keyshortcuts="Control+K Meta+K"
             >
-              <Command className="size-3.5" />K
+              <Search className="size-3.5" />
+              {/* The shortcut label depends on the device, so it only appears once known (none on touch-only). */}
+              {keyboard && keyboard !== "touch" && <span data-testid="palette-shortcut">{`${modifierKey(keyboard)} K`}</span>}
             </button>
             <a
               href={asset(profile.resume)}
