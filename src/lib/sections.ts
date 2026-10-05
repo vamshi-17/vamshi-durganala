@@ -7,7 +7,7 @@ import { hops } from "@/data/profile";
 const BASE = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
 
 /** Absolute URL of the live site (metadataBase, canonical links). */
-export const SITE_URL = "https://vamshi-17.github.io/vamshi-portfolio/";
+export const SITE_URL = "https://vamshi-17.github.io/vamshi-durganala/";
 
 export type SectionId = (typeof hops)[number]["id"];
 
@@ -16,7 +16,7 @@ export const routedSections = sectionIds.filter((id) => id !== "home");
 
 export const isSection = (id: string): id is SectionId => (sectionIds as string[]).includes(id);
 
-/** "about" → "/vamshi-portfolio/about/", "home" → "/vamshi-portfolio/". */
+/** "about" → "/vamshi-durganala/about/", "home" → "/vamshi-durganala/". */
 export const sectionPath = (id: SectionId) => `${BASE}/${id === "home" ? "" : `${id}/`}`;
 
 /** Inverse of sectionPath; unknown paths map to "home". */

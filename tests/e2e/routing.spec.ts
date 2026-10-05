@@ -1,6 +1,6 @@
 import { expect, expectInView, sectionTop, test } from "./fixtures";
 
-const url = (path: string) => new RegExp(`/vamshi-portfolio/${path}$`);
+const url = (path: string) => new RegExp(`/vamshi-durganala/${path}$`);
 
 test.describe("section URLs", () => {
   test("a direct link opens its section", async ({ page }) => {

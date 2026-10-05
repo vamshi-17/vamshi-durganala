@@ -5,7 +5,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ## What this is
 
 Personal portfolio of Vamshi Krishna Durganala. Next.js 15 (App Router) + Tailwind CSS v4 + Framer Motion + Lenis,
-**statically exported** and served from GitHub Pages at https://vamshi-17.github.io/vamshi-portfolio/.
+**statically exported** and served from GitHub Pages at https://vamshi-17.github.io/vamshi-durganala/.
 
 ## Commands
 
@@ -15,7 +15,7 @@ npm run lint    # next lint (ESLint, next/core-web-vitals + typescript)
 npx tsc --noEmit
 npm run build   # static export to ./out
 npm run og      # re-render public/og.png from scripts/og/og.html (Playwright Chromium, falls back to Chrome/Edge)
-npm run serve   # serve ./out under /vamshi-portfolio/ like GitHub Pages (after a base-path build)
+npm run serve   # serve ./out under /vamshi-durganala/ like GitHub Pages (after a base-path build)
 
 npm test                                   # everything: unit + e2e (desktop + mobile); builds the site first
 npm run test:unit                          # unit tests only, no build (~2s)
@@ -40,10 +40,10 @@ Tag tests `@mobile` to also run on the Pixel 7 project, `@mobile-only` to run on
 To build exactly as production does (assets under the Pages sub-path):
 
 ```bash
-NEXT_PUBLIC_BASE_PATH=/vamshi-portfolio npm run build
+NEXT_PUBLIC_BASE_PATH=/vamshi-durganala npm run build
 ```
 
-On Windows Git Bash prefix with `MSYS_NO_PATHCONV=1`, otherwise `/vamshi-portfolio` is rewritten to a Windows path.
+On Windows Git Bash prefix with `MSYS_NO_PATHCONV=1`, otherwise `/vamshi-durganala` is rewritten to a Windows path.
 
 ## Workflow rules
 

@@ -1,6 +1,6 @@
 // Serves the static export (./out, or $NEXT_DIST_DIR) under the GitHub Pages base path, behaving like Pages does:
-//   /vamshi-portfolio/about/  → out/about/index.html
-//   /vamshi-portfolio/about   → 301 to /vamshi-portfolio/about/
+//   /vamshi-durganala/about/  → out/about/index.html
+//   /vamshi-durganala/about   → 301 to /vamshi-durganala/about/
 //   anything missing          → out/404.html with status 404
 // Used by the Playwright tests (and handy for previewing a production build: npm run build && npm run serve).
 import { createServer } from "node:http";
@@ -9,7 +9,7 @@ import { readFile, stat } from "node:fs/promises";
 import { extname, join, normalize, sep } from "node:path";
 import { fileURLToPath } from "node:url";
 
-const BASE = process.env.NEXT_PUBLIC_BASE_PATH ?? "/vamshi-portfolio";
+const BASE = process.env.NEXT_PUBLIC_BASE_PATH ?? "/vamshi-durganala";
 const PORT = Number(process.env.PORT ?? 4173);
 // With `output: "export"`, a custom distDir (NEXT_DIST_DIR, used by the tests) is also where the export is written.
 const EXPORT_DIR = process.env.NEXT_DIST_DIR || "out";
