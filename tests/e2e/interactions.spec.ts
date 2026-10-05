@@ -1,5 +1,5 @@
 import { projects } from "../../src/data/profile";
-import { expect, expectInView, test } from "./fixtures";
+import { expect, expectInView, selectTab, test } from "./fixtures";
 
 test("hero API console calls the selected endpoint", async ({ page }) => {
   await page.goto("./");
@@ -34,15 +34,14 @@ test("experience registry switches between roles", async ({ page }) => {
   await page.goto("experience/");
   const section = page.locator("#experience");
   await expect(section.getByRole("heading", { name: "Full Stack Developer" })).toBeVisible();
-  await section.getByRole("tab", { name: /cognizant/ }).click();
+  await selectTab(section.getByRole("tab", { name: /cognizant/ }));
   await expect(section.getByText("@Cognizant")).toBeVisible();
-  await expect(section.getByRole("tab", { name: /cognizant/ })).toHaveAttribute("aria-selected", "true");
 });
 
 test("stack map highlights a traced request path", async ({ page }) => {
   await page.goto("stack/");
   const stack = page.locator("#stack");
-  await stack.getByRole("tab", { name: /Ship to production/ }).click();
+  await selectTab(stack.getByRole("tab", { name: /Ship to production/ }));
   await expect(stack.locator("span", { hasText: /^ArgoCD/ }).first()).toHaveClass(/text-lime/);
   await expect(stack.locator("span", { hasText: /^Keycloak/ }).first()).not.toHaveClass(/text-lime/);
 });

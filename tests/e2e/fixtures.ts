@@ -1,4 +1,4 @@
-import { test as base, expect, type Page } from "@playwright/test";
+import { test as base, expect, type Locator, type Page } from "@playwright/test";
 
 export const SECTIONS = ["home", "about", "experience", "projects", "stack", "contact"] as const;
 export type Section = (typeof SECTIONS)[number];
@@ -22,7 +22,9 @@ export const test = base.extend<{ pageErrors: string[] }>({
         if (m.type() === "error" && !m.text().startsWith("Failed to load resource")) errors.push(`console: ${m.text()}`);
       });
 
-      await page.route(/google-analytics\.com|googletagmanager\.com|analytics\.google\.com/, (route) => route.abort());
+      await page.route(/google-analytics\.com|googletagmanager\.com|analytics\.google\.com|gc\.zgo\.at|goatcounter\.com/, (route) =>
+        route.abort(),
+      );
       await page.route(/cloudflare-dns\.com\/dns-query/, async (route) => {
         const name = new URL(route.request().url()).searchParams.get("name") ?? "";
         const dead = name.endsWith(DEAD_DOMAIN);
@@ -58,6 +60,18 @@ export const expectInView = (page: Page, id: Section) => expect.poll(() => secti
 /** Distance of a section's top from the viewport top — should equal its scroll-margin (80px) after navigation. */
 export const sectionTop = (page: Page, id: Section) =>
   page.evaluate((id) => Math.round(document.getElementById(id)!.getBoundingClientRect().top), id);
+
+/**
+ * Clicks a tab and waits until it's selected, retrying if the click landed while the page was still settling.
+ * Right after a direct load (/stack/ …) RouteSync re-aims the scroll for ~1s, so a button can move between Playwright
+ * locating it and pressing it. (Real visitors aren't affected: their first click stops the re-aiming.)
+ */
+export async function selectTab(tab: Locator) {
+  await expect(async () => {
+    await tab.click();
+    await expect(tab).toHaveAttribute("aria-selected", "true", { timeout: 1_000 });
+  }).toPass({ timeout: 10_000 });
+}
 
 export const horizontalOverflow = (page: Page) =>
   page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth);
